@@ -1,0 +1,37 @@
+
+=== Overview 
+
+Search can be done on one or more sections.
+
+You can select to do one of the following:
+ * Page title search
+ * Page contents search
+ * last modified search
+ * Attachment Name
+ * Tags
+ * Author
+ * Comments
+ * Last Modified Date
+
+In addition, the results can be given as a regular web-page, or as an RSS Feed.
+
+=== Backend 
+
+We use Lucene and leverage its built in Query Parser for Searches. 
+
+== Configuration 
+
+You can configure how many results are shown per section, by editing 
+your oxywiki-$section.properties.
+
+Sample:
+{{{
+net.ugorji.oxygen.wiki.search.hits.max                                = 20
+
+}}}
+
+~~ Sometimes, Lucene throws a Lock Not Obtained exception, and it seems to be a bug in 
+Lucene. To accomodate, we globally disable lucene locks through this plugin. 
+Configure the plugin as above.
+~~
+

@@ -1,0 +1,18 @@
+
+Initialization
+
+At initialization, the following properties files are read:
+* WEB-INF/classes/net.ugorji.oxygen.wiki.config.override.properties (if it exists)
+  * ~~ Configuration properties are loaded from here ~~
+
+Also, a plugin is included by default, which reads BSF and initialized 
+based on it.
+
+To configure it, create the following files in WEB-INF/classes
+* net.ugorji.oxygen.plugin_bsf.pre_init_start.bsf
+* net.ugorji.oxygen.plugin_bsf.pre_init_close.bsf
+* net.ugorji.oxygen.plugin_bsf.post_init_start.bsf
+* net.ugorji.oxygen.plugin_bsf.post_init_close.bsf
+
+~~ These files should be in beanshell format ~~
+

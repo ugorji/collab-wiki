@@ -1,0 +1,75 @@
+<#assign we = hdlr.wikiEvent >
+<#assign atts = we.attributes >
+
+<#macro attstable atts99 >
+<table border="0" >
+<tr>
+<td colspan=2><b>Attributes:</b></td>
+</tr>
+<#list atts99?keys as key>
+<tr>
+<td>${key}</td>
+<td>${atts99[key]}</td>
+</tr>
+</#list>
+</table>
+</#macro>
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<dl>
+<dt><b>${hdlr.getI18n("action_header")}</b>
+<dd>${hdlr.eventToI18n(we.type)}
+<dt><b>${hdlr.getI18n("pagename_header")}</b>
+<dd>${hdlr.pagename}
+<dt><b>${hdlr.getI18n("attachmentname_header")}</b>
+<dd>${hdlr.attachmentname?default("-")}
+<dt><b>${hdlr.getI18n("versions_deleted_header")}</b>
+<dd>${hdlr.versionsDeleted?default("-")}
+<dt><b>${hdlr.getI18n("url_header")}</b>
+<dd><a href="${hdlr.url}">${hdlr.url}</a>
+</dl>
+
+<@attstable hdlr.eventAttributes?if_exists />
+
+<#if hdlr.isEvent(WikiEvent.PAGE_SAVED) >
+<p />
+<table border="0">
+<tr>
+<th>
+<b>${hdlr.getI18n("diff_header")} </b>
+</th>
+</tr>
+<#assign wrevsizeMinusOne = wrev.getSize() - 1 >
+<#list 0..wrevsizeMinusOne as x>
+<tr>
+<td>
+${hdlr.getI18n("lines_header")}: <i>${wrev.getChangeSummary(x_index)}</i>
+</td>
+</tr>
+<tr>
+<td bgcolor="#FF9933">
+${hdlr.getOriginal(wrev, x_index)}
+</td>
+</tr>
+<tr>
+<td bgcolor="#99FF99">
+${hdlr.getRevised(wrev, x_index)}</td>
+</td>
+</tr>
+</#list>
+</table>
+
+<#elseif hdlr.isEvent(WikiEvent.REVIEW_SAVED) >
+
+<b>${hdlr.getI18n("text_header")}</b>
+${StringUtils.toHTMLEscape(hdlr.eventText?default("-"), true, true)}
+
+</#if>
+
+</body>
+</html>
+

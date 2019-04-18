@@ -1,0 +1,17 @@
+
+This wiki implementation allows a user to customize the syntax that is used.
+
+Currently, there is one syntax bundled with the wiki. This is the syntax described in the [Edit] page. 
+
+However, a user can write a different parser, and configure the wiki (globally at the engine level, or for a specific section) to use that parser.
+
+== Configuration
+
+You configure this either in your oxywiki.properties or oxywiki-$sectionName.properties
+
+{{{
+net.ugorji.oxygen.markup.parserfactory = net.ugorji.oxygen.markup.parser.MarkupParser2
+}}}
+
+The class must implement the net.ugorji.oxygen.markup.MarkupParser interface.
+

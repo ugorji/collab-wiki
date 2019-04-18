@@ -1,0 +1,152 @@
+
+Macros allow the insertion of system features into normal wiki pages. The only thing that makes those pages special is that they contain macros. 
+
+== Bundled macros 
+Standard Macros
+||- Macro ||- Description ||- Example ||- Notes 
+||||||||- Standard Macros 
+|| a || Adds an anchor. || `` {a:hashname /} `` ||
+|| br || adds a ``<br>`` || `` {br /} `` ||
+|| username || Show the username || `` {username /} `` ||
+|| property || Show a property || `` {property:net.ugorji.oxygen.wiki.processor /} `` ||
+|| include || Include a page. You can include a page from this section, or from a different section. || `` {include:Main /} `` `` {include:help:Main /} `` ||
+|| hide  || Hides some text on a page || `` {hide} ... arbitrary text ... {/hide} `` ||
+|| currtime || Include the current time || `` {currtime:"yyyy.MM.dd G 'at' HH:mm:ss z" /} or {currtime /} `` ||
+|| toc || Include a table of contents, which allows you jump to different headers on the page || `` {toc/} {toc:show=true|/} `` || 
+|| script || Execute a script || `` {script:beanshell}wikiWriter.println("Hi");{/script} `` ||
+|| set || Set a property on the page during parsing (so it can be retrieved later) || `` {set:wiki_owner=Ugorji|wiki_user=anonymous|/} `` ||
+|| get || Get a property previously set on the page using the set macro ... writes it to the output || `` {get:wiki_owner/} `` ||
+||||||||- Processor Macros 
+|| code        || display and colorize (e.g. java, xml, sql, and any other misc one) || ||
+|| csv         || convert comma-seperated values snippet to a table || ||
+|| pre         || shows text in pre-formatted block || ||
+|| asis        || sends text exactly as is || ||
+|| include     || include a given page into this page || ||
+|| properties  || show a properties file snippet as a table || ||
+|| quote       || quote a string of text || ||
+||||||||- Included Action View Macros 
+|| includeview || show the view from one of the configured actions. The supported ones are attachments, pageindex, pageinfo, recentchanges, refs, sections, sysinfo, calendar || `` {includeview:recentchanges} `` ||
+|| rss || RSSViewer macro. Allows you include an RSS feed onto your page || `` {rss:url=http://localhost:8080/oxywiki/p/rss/sandbox|maxsize=30| /} `` ||
+|| markup || Allows you include a block of markup. || `` {markup} Some Wiki Markup {/markup} `` ||
+
+~~ Processor macros convert some text contents of the macro, and specially format it. They are  further explained in the {{ [Processors] }} page. ~~
+
+=== Script Macro
+
+This allows you to execute code within the page.
+
+The BeanScripting framework is used.
+
+BeanShell is bundled by default. If you want to use groovy or some other scripting engine,
+add the appropriate jars to the WEB-INF/lib, and then use the appropriate scripting name.
+
+For some added security, the script macro supports
+* Configuring which groups can execute scripts (in oxywiki-$category.properties)
+* Allowing page owners define which extra groups can execute scripts
+
+If the union of groups allowed across the section, and groups defined for that snippet, 
+is empty, then anyone can access the script. Else, only folks who are in all groups 
+specified can access the script. Others will see the string ``#!USER_NOT_ALLOWED_TO_EXECUTE_SCRIPT!#`` 
+
+You can use the following pre-defined variables in your script snippet
+-|| Variable Name -|| Type -|| Notes
+ || wikiWriter || java.io.Writer ||
+ || wikiRenderContext || net.ugorji.oxygen.wiki.WikiRenderContext || From here, you can lookup the WikiWebContext, WikiCategoryEngine, WikiProvidedObject, etc
+ || wikiMacroParameters || net.ugorji.oxygen.wiki.WikiMacroParameters
+
+E.g.
+{{{
+{script:beanshell}
+wikiWriter.write("What is it???");
+{/script}
+
+{script:groovy}
+wikiWriter.write("hello");
+{/script}
+
+#To only let folks in groups/roles "admin", "operator" to execute the script.
+{script:beanshell| admin,operator}
+wikiWriter.write("What is it???");
+{/script}
+
+#To lookup and use some of the available objects in the WikiRenderContext
+{script:beanshell}
+import net.ugorji.oxygen.wiki.*;
+import net.ugorji.oxygen.web.*;
+wikiWriter.write("<pre>");
+wp = wikiRenderContext.get(WikiConstants.PAGE_KEY);
+wce = WikiLocal.getWikiCategoryEngine();
+webctx = WebLocal.getWebInteractionContext();
+wikiWriter.write("wce.getName(): " + wce.getName() + "\n");
+wikiWriter.write("wp.getAttributes(): " + wp.getAttributes() + "\n");
+wikiWriter.write("</pre>");
+{/script}
+
+}}}
+
+== Security Issues
+
+Some macros have security concerns.
+
+The biggest one is the script macro, which allows users execute arbitrary java code.
+
+You can disable it if you want, as described below.
+
+== Configuration 
+
+You configure these by editing your oxywiki.properties file, or the corresponding oxywiki-$section.properties.
+
+Basically, any property which starts with "net.ugorji.oxygen.wiki.macro." denotes a macro.
+
+Samples is below:
+{{{
+net.ugorji.oxygen.wiki.macro.a = net.ugorji.oxygen.markup.macros.Anchor
+}}}
+
+The builtin macros are automatically enabled by default.
+
+To disable them, bind the macro name to NullMacro.
+Samples is below:
+{{{
+net.ugorji.oxygen.wiki.macro.script = net.ugorji.oxygen.markup.macros.NullMacro
+}}}
+
+To configure the groups that can execute scripts, use:
+{{{
+net.ugorji.oxygen.wiki.scriptmacro.groups              = group1, group2
+}}}
+~~ Note that these groups are container managed security groups (or roles) ~~
+
+To only allow scripts be executed, if in pages below a certain page, use:
+{{{
+net.ugorji.oxygen.wiki.scriptmacro.pageprefix          = Scripts/
+}}}
+~~ This kind of simulates a cgi-bin directory, in which you allow scripts to reside ~~
+
+== Extension (Plugin) 
+
+It is easy to write your own macro.
+
+Just implement net.ugorji.oxygen.wiki.WikiMacro, and add a line to the oxywiki-$section.properties file.
+
+== Radeox Macros
+In addition, we support [radeox | http://www.radeox.org] macros, with no special setup required ie. users use them just as they would in a native radeox application.
+This affords us a potential large library of macros in the future, as radeox is getting some industry traction.
+
+To configure them, add values in the respective files under WEB-INF/classes/META-INF/services.
+* org.radeox.api.engine.RenderEngine
+* org.radeox.filter.Filter
+* org.radeox.macro.Macro
+(Or you can also include your own jar which contains all these files).
+~~ (People that know how to use radeox plugins will know how to configure them). ~~
+
+
+== Writing your own custom macros
+You can create a custom macro, by implementing net.ugorji.oxygen.markup.MarkupMacro, and configuring
+it within the oxywiki.properties file.
+
+Ensure that you do not conflict with the names of builtin actions. To do that, you can
+prefix your action names with something unique e.g. my_ .
+{{{
+  net.ugorji.oxygen.wiki.macro.my_sayhello = my.macros.SayHelloMacro
+}}}

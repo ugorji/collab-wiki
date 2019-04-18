@@ -1,0 +1,2 @@
+### Show the recent changes for the past 30 days
+{includeview:recentchanges/}

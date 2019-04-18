@@ -1,0 +1,37 @@
+
+Each section can define a different render engine.
+
+The render engine is what defines how the input stream is translated to an html format.
+
+== Built in Render Engine
+
+This is the DefaultWikiRenderEngine.
+
+It uses the default syntax of this wiki. 
+
+Any other wiki syntax can easily be developed and plugged in.
+
+
+== Configuration 
+
+You configure these by editing your oxywiki-$section.properties.
+
+Basically, you define the property net.ugorji.oxygen.wiki.renderengine
+
+Sample is below:
+
+{{{
+net.ugorji.oxygen.wiki.renderengine                        = net.ugorji.oxygen.wiki.DefaultWikiRenderEngine
+}}}
+
+== Extension (Plugin) 
+
+It is easy to write your own render engine.
+
+Just provide an extension of the class:
+ * net.ugorji.oxygen.wiki.WikiRenderEngine
+   * Just implement the abstract method \\ \
+     {{ public abstract void render(Writer out, Reader in, WikiRenderContext context, int maxNumParagraphs) throws Exception; }}
+
+Then, configure it appropriately in the oxywiki-$section.properties file.
+

@@ -1,0 +1,40 @@
+
+This wiki was created due to a number of pressing problems we saw in available Java based (Servlet/JSP) Wiki Engines
+ * No real sections or sub-webs
+ * No hierachy (I really like to organize my pages in folders)
+ * Slow search implemetations (searching 50 pages taking over a minute)
+ * No real inter-section linking
+ * No free ones having all the capabilities we wanted in one package, especially:
+   * Page subscription
+   * Arbitrary Page subscriptons
+   * Different lock levels (no locking, warning, or exclusive locking)
+   * Support for AS-IS blocks (good for html, etc)
+   * Processing instructions, to allow the writing of pages in different formats
+     * Wiki, CSV, HTML, plain, etc
+
+Also, we believe that, by leveraging community-provided software, we could build a much stronger Wiki. 
+Consequently, we leverage the following open-source products:
+ * JRCS - http://www.suigeneris.org/space/JRCS (for the text diff utility)
+ * Jakarta Apache libraries
+   * Lucene - http://jakarta.apache.org/lucene (for indexing and searching)
+   * FreeMarker - http://freemarker.org/ (for templates we evaluate at runtime)
+   * Commons (logging, fileupload) - http://jakarta.apache.org/commons
+ * JavaCC - https://javacc.dev.java.net/ (for the parser)
+ * ROME - for supporting the RSS action and RSS macro
+
+Optionally, we also support plugging in the following
+ * EhCache - http://ehcache.sourceforge.net/ (if users want to use ehcache for the caching manager)
+ * JRCS - http://www.suigeneris.org/space/JRCS (if users want to use the JRCS page provider)
+ * Radeox - http://www.radeox.org (We provide an intregration point, to allow the transparent use of radeox-based macros AS-IS within collab)
+ * JHLabs Imaging - http://www.jhlabs.com/ (the captcha support leverages this)
+ * Bean Scripting Framework - http://jakarta.apache.org/bsf/ (for the ~~optional~~ script plugin)
+   * Groovy - http://groovy.codehaus.org (if users want to embed scripts using groovy)
+   * BeanShell - http://beanshell.org (if users want to embed scripts using BeanShell)
+
+This Collaboration product is an offering of OxygenSoftwareLibrary.com  - http://www.oxygensoftwarelibrary.com
+(a subsidiary of Naigee Group LLC - http://www.naigeegroup.com ).
+
+:: Credits :: This product was completely developed by [Ugorji Nwoke | ugorji@oxygensoftwarelibrary.com].
+
+For any information, please send an email to info@oxygensoftwarelibrary.com
+

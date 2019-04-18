@@ -1,0 +1,115 @@
+This page is a high-level feature list (no details).
+
+== Markup 
+
+ * headings 
+ * bold, italic, type writer, underlined, superscript, subscript
+ * links
+   * free links
+   * InterWiki links
+   * simple URLs
+   * image URLs
+   * links with description 
+ * horizontal rule (different widths)
+ * tables
+ * preformatted text
+   * plain
+ * lists
+   * bullet
+   * numbered (automatically in decimal, alpha, roman)
+ * as is
+   * ''so you can include html, or other stuff, as is''
+
+== Advanced Features 
+
+ * default page provider backups every page version, gzip'ing them to reduce space
+   * Also, an RCS and a Perforce provider are included OOTB
+ * Supports ability to delete arbitrary versions (if the provider supports it)
+   * Currently, OOTB default and RCS providers support this
+ * page revision list
+ * diffs between arbitrary page versions 
+ * RecentChanges
+ * sections (sub-webs, spaces ... other professional implementations have different names)
+ * built in help section
+ * wiki page templates
+ * Edit locking/warning to avoid editing conflicts
+ * Minor edits
+ * very fast and efficient search, across different sections
+
+ * ''large number of macros'' 
+ * ''attachments'' 
+ * security (leveraging web application container)
+ * ''email notification''
+ * Templates
+ * Processors
+ * Providers (for pages and attachments)
+ * Interwiki linking
+ * References
+ * Sub pages
+ * Reviews (inline and external)
+
+ * Embed Scripting in pages
+ 
+ * indexing schemes
+   * PageIndex
+   * WantedPages
+   * OrphanedPages
+   * Sections 
+ * Search
+   * title search
+   * full text search
+ * ''search results may be included into wiki pages'' via macros
+
+ * Email Notification
+   * Subscribe to a specific page (OR)
+   * Subscribe to pages matching given regular expression
+   * Minor edits (so subscribers do not receive excess email notifications)
+
+ * Isolated sections
+
+ * Online Administration
+ * Security (designed to leverage standard J2EE web application security configuration)
+
+ * RSS feeds (for recent changes)
+   * For Recent Changes on a page
+   * For Recent Changes across the whole wiki (even across different sections in the wiki)
+   * For any arbitrary search (you can get an RSS feed for any search you want)
+
+== Plugins (extensibility) 
+
+ * Macros - for embedding arbitrary dynamically generated content into wikipages
+   * Processors are also supported through this, so that one can embed different formats into wiki pages (e.g. html, xml, java source code, etc)
+ * Providers - for getting content from different sources. ''Built in providers support directories, jars, perforce, rcs''
+ * Templates and skins (e.g. single template, different stylesheets)
+ * Actions - to plugin different high level actions
+ * Logging - so log messages can go anywhere (e.g. leverage jakarta commons logging framework)
+ * Internationalized - so that it can easily be configured for different languages. We now support English and Japanese.
+ * Listeners - so you can be notified of events (like when page is saved, etc). We bundle an email listener, so that users can be notified when pages are modified.
+
+== Configuration 
+ * Simple property files
+ * each section has seperate configuration file (and inherits from overall engine). This way, each section (or category) can have its own different look or style.
+
+== Portlet and Servlet Support
+ * The Wiki is designed so that it can be used as a standard web application, or as a jsr-168 compliant portlet. 
+
+== Internationalization
+ * Pre-built support for English and Japanese
+   * Japanese localization - courtesy of Yusuke Yamamoto
+
+== Environment 
+
+ * Written in JAVA (http://java.sun.com/), so it runs on all major operating systems and web application containers
+   * Linux/UNIX, Mac OS X, Windows, etc
+   * Tomcat, Resin, Weblogic, Websphere, etc
+ * simple to install
+ * '''no need''' for external stuff. We leverage java packages which do these for us. So no need for external stuff like:
+   * diff (1.2)
+   * rcs, cvs, etc
+   * PHP
+   * SQL or other database 
+ * Leverage best-of-breed open-source software
+   * JRCS - http://www.suigeneris.org/space/JRCS
+   * JavaCC - https://javacc.dev.java.net/
+   * Lucene - http://jakarta.apache.org/lucene/index.html
+

@@ -1,0 +1,151 @@
+ 
+
+=== Quick hint 
+
+* For clarity, always put a blank line after
+  * List
+  * Table
+* Always put a space between blocks (so they're not recognized by parser as part of a word) e.g. do ``{a:b /} {{c d}}`` NOT ``{a:b /}{{c d}}``. This applies to:
+  * macros 
+  * underline
+  * etc 
+* Never put < / textarea > on a page (it will mess up the edit screen).
+
+=== Q: Pages required 
+
+Top level page is always called ''Main''.
+
+The built in default template also recognizes 
+ * ''Top''
+ * ''Left''
+ * ''Right''
+
+=== Q: How to do security 
+
+The request path contains the action, section and pagename in order. The servlet paths (e.g. in your browser) are like this:
+ * `` __contextpath__ / p / __action__ / __section__ / page [ #anchor | / __attachment__ ] ``
+
+Thus, anyone can restrict specific actions, or specific sections or specific pages to given users or groups, using standard J2EE web container security access permissions.
+
+For example, you can do the following:
+ * Restrict access to edit (action) on nigeria (section), to folks in group: nigerians
+
+=== Q: How to create a page 
+  
+if page doesn't exist, put link there. This is left to the template creator to keep the link. WikiCategoryEngine will just pring that the page does not exist (in bold and red)
+
+Also, you can go to the misc actions page, and directly type the name of the page. This takes you to either the page, or gives a link to create it.
+
+=== Q: Support Wiki Words? 
+
+Yes (to a point).
+
+=== Q: Must it be deployed exploded? 
+No. You can deploy it as a war. The best thing to do is:
+* Create the file WEB-INF/classes/net.ugorji.oxygen.wiki.config.override.properties
+  * In there, put in a persistence directory which is on the filesystem somewhere. \\ \
+    E.g. {{ net.ugorji.oxygen.wiki.persistence.dir = /home/oxywiki }}
+  * By default, the config, runtime and pages are off this page (except explicitly configured)
+
+
+
+=== Q: Interwiki Links 
+
+* For external Wiki's
+  * use a url
+    * e.g. `` WIKINAME:WIKIPAGE ``
+
+=== Q: what is ``CONTENT THAT SHOULD GO HERE IS UNAVAILABLE`` 
+
+This happens when a user tries to do one of the following
+* execute a page with a script, but he doesn't have access to execute the script. \
+  Instead of bombing out, it writes this to the page.
+* AS_IS text is not supported for this section
+
+=== Q: Some attachments do not show, if attachment name starts with ``#``
+
+``#`` is used in the request string, to signify an anchor. This wiki does not support loading up attachments 
+with ``#`` in their name.
+
+=== Q: It seems my Table Of Contents is not working well
+
+Add this at the top of your Left and Right and Top and Bottom decoration pages, 
+so that name anchors are not created for them when used in your template. 
+   i.e. at top of Left, put `` {pi:singlepage=false| /} ``
+
+Without this, named anchors are created for Left, Right, Top, Bottom pages which 
+are included by the default template. This will conflict with the ones for the 
+actual page being viewed.
+
+=== Q: When using rss macro, etc ... the wiki may hang???
+
+This happens because we code according to JDK 1.4, which doesn't support a timeout on the 
+URLConnection object. Consequently, when the rss macro looks up a resource, if that resource
+does not return, we will wait forever till that returns. If many folks are looking up rss from
+a server that is hung, all the threads in your own application server may hang waiting for a response.
+
+You can fix this in your wiki, by configuring a url_conn_timeout plugin. 
+Put this in your oxywiki.properties.
+
+{{{
+net.ugorji.oxygen.wiki.plugin.postinit.url_conn_timeout = net.ugorji.oxygen.wiki.extensions.SetURLConnectionTimeoutWikiPlugin
+net.ugorji.oxygen.wiki.urlconnection.read_timeout       = 10000
+net.ugorji.oxygen.wiki.urlconnection.connect_timeout    = 10000
+}}}
+
+Unfortunately, as of JDK 1.4, these values were set as global properties on the whole JVM. So this
+plugin does a System.setProperty(...) to allow this.
+
+Above configuration says that read and connect respectively should timeout after 10 seconds.
+
+Alternatively, (and most folks running servers do this), you can start your application 
+server with the following java command line properties
+ {{{ -Dsun.net.client.defaultConnectTimeout=10000 -Dsun.net.client.defaultReadTimeout=10000 }}}
+This tells the default (SUN provided) URL Connection handlers to timeout after 10 seconds when
+connecting or reading from a URL stream.
+
+=== Q: Can I make my save work faster?
+
+The wiki is designed, such that, when a save or delete is happening on a section, no-one else
+can save or delete in that section till one completes.
+
+This may be un-necessary, since the provider may store different pages totally separately, so there
+is no concern of one overriding the other.
+
+By configuration, you can configure that we synchronize on the page name, that way, people saving 
+different pages can do it simultaneously (as opposed to one after the other).
+
+To do this, set the configuration below ...
+{{{
+net.ugorji.oxygen.wiki.synchronize_save_delete_on_interned_strings = true
+}}}
+
+=== Q: Lucene index seems to only store time as precise as a day
+
+For performance and because all actions leveraging timestamp in the lucene index only cares about
+changes on a day by day basis, the timestamps stored in Lucene index are only as precise as the day 
+(not hours, minutes, seconds or milliseconds).
+
+Hopefully, no one should care about this.
+
+=== Q: Can I use a different syntax for the wiki
+
+Yes. 
+
+Currently, only 1 parser (and thus 1 syntax) is included.
+
+To use a different syntax, you will need to configure the property
+{{ net.ugorji.oxygen.markup.parserfactory }}
+
+=== Q: Sometimes, The existing tags shown on edit screen is empty
+
+This happens if you configure the section with {{ net.ugorji.oxygen.wiki.index.details = false }}.
+When this happens, details of the page including the metadata (e.g. tags, author, etc) are not loaded at startup.
+
+=== Q: How do I find all the tags in use within a section (or set of sections)
+
+Go to the Search Page, Click on Advanced, and type the tag name in there and 
+select the sections to check.
+
+You will get a list of all pages with those tags set.
+

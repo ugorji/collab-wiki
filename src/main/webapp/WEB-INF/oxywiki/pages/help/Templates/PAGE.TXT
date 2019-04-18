@@ -1,0 +1,141 @@
+
+JSP files are used to implement the views in this wiki.
+
+Each section can define where it finds the jsp files from. 
+
+== Built in template handlers 
+
+The templates can use one of our collection of stylesheets.
+ * main style sheet
+   * located at ''${net.ugorji.oxygen.web.base.url}/stylesheets/stylesheet.css''
+   * By default, comes with light grey background
+   * However, we bundle stylesheet-lightbrown.css, stylesheet-lightgreen.css and stylesheet-lightblue.css
+ 
+You can configure either one to use for your section pages, or create your own (very simply).
+
+== Configuration 
+
+You configure these by editing your oxywiki.properties file, or the corresponding oxywiki-$section.properties.
+
+Samples are below:
+
+{{{
+net.ugorji.oxygen.wiki.engine.name                   = COLLAB
+net.ugorji.oxygen.wiki.template.basefile             = template.jsp
+net.ugorji.oxygen.wiki.template.templates            = default
+net.ugorji.oxygen.wiki.template.jsp.stylesheets      = ${net.ugorji.oxygen.web.base.url}/stylesheets/stylesheet.css
+
+}}}
+
+To use the light blue, do something like:
+{{{ 
+net.ugorji.oxygen.wiki.template.jsp.stylesheets      = ${net.ugorji.oxygen.web.base.url}/stylesheets/stylesheet.css \
+                                            ${net.ugorji.oxygen.web.base.url}/stylesheets/stylesheet-lightblue.css
+}}}
+
+== Creating your own jsp templates
+
+You replicate one of the *.jsp files in the WEB-INF/oxywiki/templates/default directory,
+put it in your own WEB-INF/oxywiki/templates/$mytemplatename directory,
+and configure the templates to look in your directory first.
+
+{{ net.ugorji.oxygen.wiki.template.jsp.templates        = $mytemplatename,default }}
+
+Suppose I want to very simply create a different look and feel for a section called '''mycat2'''
+ * create the following files:
+   * /WEB-INF/oxywiki/templates/mycat2/template.jsp, (and other *.jsp files at will)
+ * __ Within oxywiki-mycat2.properties __ 
+{{{
+  net.ugorji.oxygen.wiki.template.jsp.templates        = mycat2,default
+  net.ugorji.oxygen.wiki.template.jsp.stylesheets      = ${net.ugorji.oxygen.web.base.url}/templates/mycat2/stylesheet.css
+}}}
+ 
+== Customizing the main builtin template 
+
+The built in template is designed to allow these functions simply:
+ * Customize decorations or menus on every page view
+   * Top
+   * Bottom
+   * Left
+   * Right
+ * Customize colors simply
+   * Basically override the general background colors
+
+To create a Top, Left or Right section, just create pages corresponding 
+to these names. For example, if you create a page called Left, that page 
+will be displayed on the left for every page view. Same thing goes for Right and Top.
+
+To customize colors, you can do the following
+ * Create a small stylesheet like below \\ \
+{{{
+.footer, .titlebar, th, pre, h1, h2, h3, h4, h5, h6, 
+.breadcrumbs, .leftmenu, .rightmenu, .wikireview, div#oxywiki_view3navwrap {
+    background-color: #fff5e8; 
+}
+}}}
+ * Attach this to a page (so that it becomes available online). 
+   * For example, let's say you attach this to the Main page of sandbox section. And you call it mystylesheet.css
+ * Configure this page as an override for your stylesheet. E.g. within your configuration file for your section (like oxywiki-help.properties), put \\ \
+{{{
+net.ugorji.oxygen.wiki.template.jsp.stylesheets            = ${net.ugorji.oxygen.web.base.url}/stylesheets/stylesheet.css \
+                                                  ${net.ugorji.oxygen.web.base.url}/p/viewattachment/sandbox/Main/mystylesheet.css
+}}}
+ * Then reload your section
+
+
+== How the builtin template works 
+
+The built in template works off this model:
+ * Make the typical usage fast (do not try to load up details unless requested)
+
+Consequently, when a page is shown
+ * It just shows the actual current text 
+   * ~~ does not try to load up meta data about the page ~~
+   * If attachments are shown, only show link to attachment (do not get meta data like author, comments, etc)
+   * If reviews are shown, only show review text (not metadata like author, etc)
+ * User can explicitly say 'show details'
+   * This then shows details for everything
+
+The reason for this model, is that the speed of getting metadata is dependent on the underlying page provider. However, the typical page
+providers already have the text or attachments on disk, but meta data is typically stored elsewhere (e.g. in CVS or Perforce repository, in a DB, etc).
+
+This thus gives a faster view for typical usage.
+
+However, you can configure if
+ * You want details to be shown by default
+ * You want attachments, page info and reviews to be shown by default
+The parameters to set these are:
+{{{
+  net.ugorji.oxygen.wiki.show.details                    = true
+  net.ugorji.oxygen.wiki.template.jsp.show.pageinfo      = false
+  net.ugorji.oxygen.wiki.template.jsp.show.attachments   = true
+  net.ugorji.oxygen.wiki.template.jsp.show.reviews       = false
+  net.ugorji.oxygen.wiki.template.jsp.show.inlinereviews = false
+  net.ugorji.oxygen.wiki.template.jsp.show.toplinks      = true
+}}}
+
+== Style sheet
+
+At least, the following style classes must be defined. Their names are self-describing:
+-|| Styles to define
+ || wikicalendartitle
+ || wikireview
+ || wikinonexistentpage
+ || wikiexternallink
+ || wikicalendardate
+ || wikitoc
+
+The default template also leverages the following:
+-|| Leveraged by built-in template
+ || breadcrumbs
+ || leftmenu
+ || rightmenu
+ || titlebar
+ || pagelayout
+ || footer
+
+Some of the other style classes in the oxywiki/stylesheets/stylesheet.css setup
+the styles for some builtin macros e.g. code, etc 
+
+These include xml-tag, javascript-comment, etc etc etc.
+

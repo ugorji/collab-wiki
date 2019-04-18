@@ -1,0 +1,30 @@
+
+<#assign we = hdlr.wikiEvent >
+
+<#macro attstable atts99 >
+<#list atts99?keys as key>
+${key}: ${atts99[key]}
+</#list>
+</#macro>
+
+-- ${hdlr.eventToI18n(we.type)} --
+${hdlr.getI18n("pagename_header")}:        ${hdlr.pagename}
+${hdlr.getI18n("url_header")}:         ${hdlr.url}
+${hdlr.getI18n("attachmentname_header")}:        ${hdlr.attachmentname?default("-")}
+${hdlr.getI18n("versions_deleted_header")}:      ${hdlr.versionsDeleted?default("-")}
+
+${hdlr.getI18n("attributes_header")}
+-----------  
+<@attstable hdlr.eventAttributes?if_exists />
+
+<#if hdlr.isEvent(WikiEvent.PAGE_SAVED) >
+${hdlr.getI18n("text_header")}
+-----
+${wrev?if_exists}
+
+<#elseif hdlr.isEvent(WikiEvent.REVIEW_SAVED) >
+${hdlr.getI18n("text_header")}
+-----
+${hdlr.eventText?default("-")}
+</#if>
+

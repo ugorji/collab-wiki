@@ -1,0 +1,29 @@
+
+You can plug in listeners, which get notified on different events.
+
+The events generally fall into:
+ * PAGE_SAVED
+ * PAGE_DELETED
+ * ATTACHMENT_SAVED
+ * ATTACHMENT_DELETED
+ * REVIEW_SAVED
+ * REVIEW_DELETED
+ * MINOR_EDIT_FLAG_KEY
+
+== Configuration 
+
+You configure these by editing your oxywiki.properties file, or the corresponding oxywiki-$section.properties.
+
+Basically, any property which starts with "net.ugorji.oxygen.wiki.listener." denotes a listener.
+
+Samples is below:
+{{{
+net.ugorji.oxygen.wiki.listener.email = net.ugorji.oxygen.wiki.extensions.WikiEmailNotifier
+}}}
+
+== Extension (Plugin) 
+
+It is easy to write your own listeners.
+
+Just implement net.ugorji.oxygen.wiki.WikiEventListener, and add a line to the oxywiki-$section.properties file.
+

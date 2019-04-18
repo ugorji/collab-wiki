@@ -1,0 +1,8 @@
+
+Holds a number of example pages, e.g.
+ * Examples/Random
+ * Examples/Java
+ * Examples/AsIs
+ * Examples/Include
+ * Examples/PageIndex
+

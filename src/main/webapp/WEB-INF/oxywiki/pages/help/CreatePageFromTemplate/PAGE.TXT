@@ -1,0 +1,42 @@
+
+== Using Page Templates
+
+Sometimes, U have this scenario where regularly, you need to create a new page 
+based off some standard text. This may happen when you have regular status reports
+which must follow a pre-defined format, or otherwise.
+
+Templates come in very handy here, because you can just preload the template, 
+then edit the contents for this new page.
+
+The support is very flexible, such that users can create as many templates as they
+want, and use that to create pages.
+
+On the edit screen, the templates configured are shown. The user can select any and
+pre-load the edit screen with the contents.
+
+== Configuration 
+
+The following are used to configure the templates. You set what the name of the 
+parent page of all templates is. Then, all sub-pages of that page will exist as
+templates for your edit session. Note that you can also reference pages defined in
+other sections for your templates. These variables are set in the 
+oxywiki-$section.properties file.
+ * net.ugorji.oxygen.wiki.pagetemplate.parentpage
+
+{{{ 
+# Example: 
+net.ugorji.oxygen.wiki.pagetemplate.parentpage = Templates, help:Examples
+}}}
+
+Means if U make the following pages within your section: 
+# Templates/T1
+# Templates/T2
+and the following pages exist in the help section: 
+# Examples
+# Examples/AsIs
+# Examples/Include
+# Examples/Java
+# Examples/PageIndex
+# Examples/Random
+Then all of these will be available in the edit screen for you to start a new page with.
+

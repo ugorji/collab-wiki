@@ -1,0 +1,60 @@
+Collab (Oxygen Wiki) is a high-performance enterprise collaboration platform, designed around the popular "wiki" concept. 
+It runs on any servlet 2.3 or above container.
+
+The help comes packaged as a bundled section, so you can get more detailed information about using "collab" from [help:Main].
+
+We did a comparative study of some of the more popular free and commercial wiki products on the market. 
+
+A comparison is below:
+-|| Item -|| JSP Wiki -|| Moin Moin  -|| Confluence -|| Collab
+ || Processors (including like java code, etc) || N || Y || Y || Y
+ || Macros || Y || Y || Y || Y
+ || Auto linking || 1/2 || Y || Y || Y
+ || Email Notifications on changes, attachments, etc || N || Y || Y || Y
+ || perforce integration || Y || N || N || Y 
+ || Multiple categories || N || N || Y || Y
+ || Sub pages || N || Y || T || Y
+ || Designed for leveraging J2EE container-managed security || N || N/A || N || Y
+ || Extensive markup support || 1/2 || Y || Y || Y
+ || Advanced and simple templating support || 1/2 || 1/2 || Y || Y
+ || Efficient search || N || Y || Y || Y
+ || Efficient search across categories || N || N || Y || Y
+ || Highly pluggable || 3/4 || 3/4 || Y || Y
+ || Read only categories, pages, etc || N || N || Y || Y
+ || Reviews (inline and whole-page) || N || N || Y || Y
+ || Online management and administration || N || N || Y || Y
+ || Efficient Attachment Support || 3/4 || Y || Y || Y
+ || Efficient Default Page versioning support || N || Y || Y || Y
+ || Wiki Farm support || N || 1/2 || Y || Y
+ || Close to WYSIWYG  || 0.6 || 0.75 || 0.6 || 0.75
+ || Professional look built in || 1/2 || 3/4 || Y || Y
+ || Runs on J2EE web container || Y || N || Y || Y
+ || Supports must-have and desirable features (enumerated below) || 0.5|| 0.6 || 0.95 || 1.0
+
+The must-have and desirable features of wiki's, which only a number of available ones claim to have, are reproduced below. 
+Collab possesses all of them.
+
+=== Must-Have Features 
+
+
+ * **Wiki Markup**. Support wiki markup: bold, italic, fixed-width, bullets, tables, headings, embedded images, line breaks, horizontal lines, preformatted text, external hyperlinks, !CamelCase links to wiki pages, etc.
+ * **Attachments**. Allow arbitrary documents to be uploaded and referenced via links.
+ * **RSS Feed**. Publish recent changes to RSS.
+ * **PERFORCE integration**. Use PERFORCE as backing store for documents.
+ * **Change management**. View changes to entire wiki or on a per-page basis. Allow changes to be viewed as diffs, support reversion of pages, deletion of pages.
+ * **User management**. Allow users to log in to the wiki for identification purposes.
+ * **Indexing**. Maintains a searchable index of all pages in the wiki.
+
+=== Desirable Features 
+
+ * **Email notification**. Allow users to subscribe to pages and receive notifications of changes by email.
+ * **Customizable style**. Allow customization of look via stylesheets or templates.
+ * **HTML Editing**. Allow for pages that are edited directly in HTML instead of wiki markup.
+ * **External editing**. Allow pages to be edited in an external editor (like emacs) rather than in an error-prone HTML form.
+ * **History**. Optionally display a short history that can be used to navigate among recently accessed pages.
+ * **Favorites**. Optionally display a short list of links to bookmarked wiki pages.
+ * **Nested Hierarchy**. Allow pages to be created in "sub directories" to help avoid name collisions. 
+ * **Escaping !CamelCase**. Allow !CamelCase text to be escaped so it doesn't form a link to a wiki page.
+ * **Customizability**. API for hacking the wiki, integrating non-wiki content sources into wiki pages, etc.
+ * **Printer-friendly Page**. Allow user to select a "printer-friendly" version of a page that strips away navigation/edit decorations.
+

@@ -1,0 +1,47 @@
+
+Oxygen Wiki is designed to support multiple languages.
+
+It comes built in with support for English and Japanese. 
+~~ The Japanese localization is courtesy of Yusuke Yamamoto. ~~
+
+== How does it work? (how to switch language)
+
+When a user's request is being processed, a locale (languge) is inferred, and used
+for showing the UI. 
+
+The language a user is presented with is decided using the flow below:
+* If the user explicitly set a language just for that session, via some menu, that language is used
+* Else if the user has saved a preferred language in the user preferences, that language is used
+* Else if the user's browser has a preferred language set, that is used
+* Else the default for the wiki engine is used
+
+This shows the multiple ways at which one can set the language.
+
+''Note: The user defined locale can be changed, and stored, from the __ user preferences __
+screen.''
+
+
+== Configuration
+
+A set of supported locales, and a default locale, can be configured
+either at the wiki engine level (in oxywiki.properties) or can be
+overridden for a given section (in oxywiki-$sectionname.properties). 
+
+The values configured are the standard locale descriptions e.g. en,
+en_US, fr, etc.
+
+This is done by configuring the value in the oxywiki.properties file
+ * Configuring default locale
+   * net.ugorji.oxygen.wiki.locale
+     * e.g. net.ugorji.oxygen.wiki.locale = en
+ * Configuring supported locales
+   * net.ugorji.oxygen.wiki.locales.supported
+     * e.g. net.ugorji.oxygen.wiki.locales.supported = en, fr
+
+== Porting to another language
+To support other languages, you need to do the following:
+ * Create net.ugorji.oxygen/wiki/WikiResources_$language.properties
+   * e.g. net.ugorji.oxygen/wiki/WikiResources_fr.properties (to support french)
+ * Have this file contain the same set of properties in net.ugorji.oxygen/wiki/WikiResources.properties
+   * This file is found in the classpath, under the WEB-INF/classes directory
+

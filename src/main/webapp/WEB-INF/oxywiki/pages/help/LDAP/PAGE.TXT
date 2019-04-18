@@ -1,0 +1,67 @@
+
+= LDAP
+
+This wiki supports LDAP integration.
+
+This wiki does not manage users. It allows you leverage whatever authentication and 
+authorization mechanism you want on the wiki. 
+
+Many organizations already have an ldap directory server which they use to manage the 
+authentication and authorization of their users.
+
+To give some support for that, we have built in an ldap view. This way, users can configure
+the ldapfind action as their user shortcut, and have links to usernames (author names)
+go to the page with this view.
+
+== Schema mapping
+
+By default, we assume a schema mapping that uses the following names for attributes.
+Most of these are self explanatory. If your schema names it a different attribute, 
+please configure it as shown under configuration.
+
+-|| Attribute -|| Meaning
+ || rdn  || The key used to define a distinguished name. 
+ || cn         || Common Name
+ || username || 
+ || telephoneNumber || 
+ || title || 
+ || id || unique integer id e.g. employeeNumber
+ || department || 
+ || departmentNumber || 
+ || organization || 
+ || street || 
+ || city || 
+ || st || 
+ || postalCode || 
+ || co || 
+ || manager || 
+
+== Configuration
+
+The configuration is simple. In your oxywiki.properties or oxywiki-$section.properties,
+put the values as below.
+
+{{{
+# This is the URL 
+net.ugorji.oxygen.wiki.ldapfind.url = ldap://ldap.myserver.com/dc=myserver,dc=com?uid?(objectClass=*)
+# This is the key which defines the relative distinguished name
+net.ugorji.oxygen.wiki.ldapfind.rdn_key = uniqueIdentifier
+# This is the root. Sometimes, we construct a dn by taking the rdn_key, a value and the dnroot
+net.ugorji.oxygen.wiki.ldapfind.dn_root = ou=people,dc=MetaView,dc=bea,dc=com
+# This is the key which the ldap server stores the username as
+net.ugorji.oxygen.wiki.ldapfind.username_key = uid
+
+# The following two are optional. Many organizations do not require authentication to allow
+# users see information from the ldap directory. However, if your organization requires
+# access to connect to the ldap server, then configure accordingly as below
+net.ugorji.oxygen.wiki.ldapfind.user =
+net.ugorji.oxygen.wiki.ldapfind.password =
+
+# Configure your schema overrides below.
+# You at least need to configure rdn, and maybe id. Sample below.
+net.ugorji.oxygen.wiki.ldapfind.schema.rdn = uniqueIdentifier
+net.ugorji.oxygen.wiki.ldapfind.schema.id = employeeNumber
+net.ugorji.oxygen.wiki.ldapfind.schema.organization = ou
+
+}}}
+

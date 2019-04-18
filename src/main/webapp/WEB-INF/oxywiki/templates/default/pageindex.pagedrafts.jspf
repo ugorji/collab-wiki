@@ -1,0 +1,30 @@
+<table>
+<tr>
+<th colspan="4"><%= wi18n.str("jspviews.pageindex.page_drafts") %></th>
+</tr>
+<tr>
+<th><%= wi18n.str("jspviews.pageindex.actions") %></th>
+<th><%= wi18n.str("jspviews.pageindex.page_name") %></th>
+<th><%= wi18n.str("jspviews.pageindex.date") %></th>
+<th><%= wi18n.str("jspviews.pageindex.author") %></th>
+</tr>
+<% if(pageDrafts != null) {
+   for(Iterator itr = (new TreeSet(pageDrafts.keySet())).iterator(); itr.hasNext(); ) { 
+     String wpage = (String)itr.next();
+     Map dd = (Map)pageDrafts.get(wpage);
+     wlh2.setWikiPage(wpage); 
+     wlh2.setExtrainfo(null);
+%>
+<tr>
+<td>
+<a href="<%= WikiViewUtils.decipherURL(wlh2, "pageinfo") %>"><%= wi18n.str("jspviews.pageindex.info") %></a> <b>|</b>
+<a href="<%= WikiViewUtils.decipherURL(wlh2, "revert") %>"><%= wi18n.str("jspviews.pageindex.revert") %></a> <b>|</b>
+<a href="<%= WikiViewUtils.decipherURL(wlh2, "edit") %>"><%= wi18n.str("jspviews.pageindex.edit") %>
+</td>
+<td><%= wpage %></td>
+<td><%= df.format((Date)dd.get("date")) %></td>
+<td><a href="<%= WikiUtils.getUserLink((String)dd.get("author")) %>"><%= dd.get("author") %></a></td>
+</tr>
+<% } %>
+<% } %>
+</table>

@@ -1,0 +1,187 @@
+
+{{{ INACCURATE INFO ... WORK IN PROGRESS }}}
+
+{hide}
+= Help on technical details 
+
+== Sections 
+
+== Advantages 
+
+* Uses best of breed software
+  * Versioning file provider uses RCS format for efficient storing of page changes and attributes
+  * Lucene search and indexing engine uses for efficient searching
+  * Java2Html used to show java code
+* Very feature full
+* Extensive but simple syntax
+
+
+== Features 
+
+* Designed to leverage standard webapplication security
+  * Request path makes this possible
+  * e.g. /wiki/oxy/
+* Supports different page formats via processors
+  * e.g. java code, CSV, etc
+* Different backend storage mechanisms supported
+  * Database, Versioned File system, etc
+* Extended but simple syntax
+  * Simple things are simple. Harder things are simply possible.
+  * Supports anchors, attachments, review comments, 
+* Sections within wiki's
+  * Sections can sport their own templates
+  * Sections are sub-webs, with their own space
+  * Sections can be inter-linked or searched across
+* Hierachial configuration across sections.
+  * Configuration files exist for the whole engine, and then per section
+  * Configuration for sections inherits those for whole engine
+* Extensive page attributes
+  * Including comments, subscribers, author, etc
+* Extended Wiki links
+  * exact link, interwiki link, same wiki link, same section link
+
+== Wiki organization 
+
+A Wiki Engine has references to different sections. Each section is
+self contained, but knows its Wiki Engine. Consequently, all
+sections are indirectly linked.
+
+A Section has a handle to its
+ * Processors
+ * Macros
+ * Providers (for pages and attachments)
+ * Template Handler
+ * Indexing Manager (for page references and searching)
+
+== HTTP interaction 
+
+The request path is something like:
+* http://$hostname:$port/$contextPath/oxy/$action/$section/$page 
+  * e.g. http://localhost:9001/wiki/oxy/view/sandbox/Main
+
+A top-level servlet handles every request. It first parses the servlet
+path, creates a WikiLinkHolder, and stores in the context. The
+WikiLinkHolder contains, among other things:
+ * Page Name
+ * Section Name
+ * action
+From the WikiLinkHolder, we infer the following, and store in the
+request attributes: 
+ * WikiPage (if page name is extracted)
+ * WikiCategoryEngine
+We then pass the request over to the Action class which maps to the
+action name.
+
+== Engine interaction 
+
+To display a page, the following sequence of events happens.
+
+ * WikiCategoryEngine will 
+   * get the Reader for the Wikipage
+   * pass it to the RenderEngine to render, and write out to the response
+
+== Actions 
+
+Some actions are defined on the servlet level. They fall under 3
+sections, and are shown below:
+ * Wiki Page Actions
+   * edit
+   * view
+   * printableview
+   * attachment
+   * attachments
+   * pageinfo
+ * Wiki Engine Actions
+   * sysinfo
+   * sections
+   * reload
+   * reloadsection
+   * pageindex
+
+== Macros 
+
+A macro allows you to extend the functionality, and embed different
+content into the page at display time.
+
+Macros directly have access to the request and response objects, so
+can do anything.
+
+The built-in macros are:
+ * sayhi = net.ugorji.oxygen.wiki.macros.SayHi
+ * br = net.ugorji.oxygen.wiki.macros.Br
+ * a = net.ugorji.oxygen.wiki.macros.Anchor
+ * attachments = net.ugorji.oxygen.wiki.macros.Attachments
+ * pageinfo = net.ugorji.oxygen.wiki.macros.PageInfo
+ * recentchanges = net.ugorji.oxygen.wiki.macros.RecentChanges
+ * extwiki = net.ugorji.oxygen.wiki.macros.ExternalWikiLink
+ * pageindex = net.ugorji.oxygen.wiki.macros.PageIndex
+
+Macros never output stylesheet class names. They only output bland html.
+
+== Wiki Markup 
+
+Wiki Markup is done using Javacc to implement a parser.
+
+== Providers 
+
+
+
+== Inter wiki 
+
+
+
+== How to setup 
+
+
+
+== Page attributes 
+
+The currently known page attributes are:
+ * author
+ * comments
+ * subscribers
+
+== Editing 
+
+
+=== Locks 
+
+Locks are acquired each time an edit is started. 
+
+Three configuration levels are used for locking:
+ * None
+   * Here, we never lock pages. Anyone can edit.
+ * Warn
+   * Here, we list the current locks on the page, and timeout period.
+ * Exclusive
+   * Here, one person has to have an exclusive lock to a page, to perform an edit.
+
+
+
+
+== Indexing Manager 
+
+We use Lucene for indexing. The indexing currently does the following
+for us:
+ * page references
+ * searching
+
+When the web application is first initialized, we run the indexing manager on every page contained for every section in this engine. Depending on the speed of the page provider, this may take a little while.
+
+We try to alleviate this by calling getWikiEngine in a seperate thread (so that it doesn't hold up the server from starting).
+
+== Searching 
+
+Lucene is used for searching. It leverages the indexing manager above.
+
+
+== Security 
+
+
+
+
+== Class organization 
+
+
+{/hide}
+

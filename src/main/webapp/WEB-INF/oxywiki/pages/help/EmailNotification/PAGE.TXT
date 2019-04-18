@@ -1,0 +1,62 @@
+
+You can subscribe
+ * to a specific page, or 
+ * to all pages matching a given regular expression (across all sections)
+
+== Specific page 
+
+This is done from the edit screen. The steps are as below:
+ * Edit a page
+ * Add an email address to the subcribers field
+
+Note: You should put in email addresses separated by commas. Example: {{ ugorji@oxygensoftwarelibrary.com, james@somefunkyhost.net }}
+
+Whenever this page is edited, you will get an email notification with the diff of the changes.
+
+== Pages matching a regular expression 
+
+This is done from the user preferences screen:
+ * Go to user preferences
+ * Set up your preferred username and email address
+ * put a regular expression detailing pages to match and get email notification on. Examples are:
+   * {{ .* }} - send email when any page is updated
+
+You will get an email notification with the diff of the changes.
+
+''Note that the user preferences apply across the whole engine, so across all sections. Consequently, the matches apply across all sections.''
+
+To subscribe just to pages in a specific section, prefix the regex with {{ $sectionname/ }}. Examples are:
+ * regular expression(s)
+   * {{ sandbox/.* }} - send email when any page is in sandbox section is updated
+   * {{ sandbox/Ma.* }} - send email when any page is in sandbox section, starting with ''Ma'', is updated
+   * {{ sandbox:Upgrade/.*|users:.* }} - send email after edit/saving of pages starting with __ Upgrade/ __ in the __ sandbox __ section, or any page in the __ users __ section.
+
+== Configuration 
+
+To configure this, you will add email notification as one of your listeners.
+
+~~ Email can either be sent in html or text format. ~~
+
+{{{
+net.ugorji.oxygen.wiki.listener.email          = net.ugorji.oxygen.wiki.extensions.WikiEmailNotifier
+}}}
+
+The following properties will also apply for email notifications
+{{{
+net.ugorji.oxygen.wiki.email.supported                 = false
+net.ugorji.oxygen.wiki.email.smtp.host                 = localhost
+net.ugorji.oxygen.wiki.email.sender                    = someguy@localhost
+# this value can either be html or text
+net.ugorji.oxygen.wiki.email.format                    = html
+}}}
+
+== Minor edit 
+
+When making an edit (attachment, page edit, page create, review add, etc), you have the option of making the change a minor edit.
+
+The Email Notification listener will only broadcast an email if
+ * Subscribers are present
+ * The minor edit flag was not set for the change.
+
+This way, you can allow only changes you want folks to be aware of, to get spammed out.
+

@@ -1,0 +1,83 @@
+<% if(mb_showBorder) { %>
+
+          <% if(mb_showTopLinks) { %>
+	  <div id="oxywiki_view3navwrap">
+	    <ul id="oxywiki_view3nav">
+            <% for(int i = 1; i <= m_menu.getNumCategories(); i++) { %>
+	      <li><a href="#"><%= m_menu.getText(i, 1) %></a>
+	        <ul>         
+	      <% for(int j = 2; j <= m_menu.getNumItems(i); j++) { %>
+	        <% if(StringUtils.isBlank(m_menu.getLink(i, j))) continue; %>
+	        <li><a href="<%= m_menu.getLink(i, j) %>"><%= m_menu.getText(i, j) %></a></li>
+              <% } %>
+                </ul>
+              </li>
+            <% } %>
+            </ul>
+            
+          </div>
+	  <% } %>
+
+<div class="oxywiki_menu_links">
+<%= m_wi18n.str("general.welcome") %> 
+<i><%= ms_username %></i>
+(1/<%= m_wikiengine.getNumOpenSessions() %><% if(mb_showLogoutLink) { %> 
+ ... <a href="<%= ms_logoutlink %>"><%= m_wi18n.str("templates.default.logout") %></a><% } %>)
+<%-- <%= m_wi18n.str("general.users_online") %> --%>
+
+<i><a href="<%= ms_mainurl %>"><%= m_wcengine.getName() %></a></i>
+ <b>||</b>
+<a href="<%= ms_helplink %>"><%= m_wi18n.str("templates.default.help") %></a> |
+<a href="<%= ms_aboutlink %>"><%= m_wi18n.str("templates.default.about") %></a> |
+<a href="mailto:<%= ms_adminemail %>"><%= m_wi18n.str("templates.default.feedback") %></a> 
+ <b>||</b>
+<% for(int i = 0; i < m_locales.length; i++) { %>
+<a href="javascript:oxywiki_updateusersession('locale', '<%= m_locales[i].toString() %>');"><%= m_locales[i].toString() %></a>
+<% } %>
+ <b>||</b>
+<% if(mb_pageExists && mb_isViewPage) { %>
+  <a href="<%= ms_printablelink %>"><%= m_wi18n.str("templates.default.print") %></a> |
+<% } %>
+<form action="<%= ms_searchlink %>" style="display:inline">
+   <input type="hidden" name="wiki.submit" value="true" />
+   <input type="text" name="SIMPLE_SEARCH_KEY" value="<%= m_wi18n.str("templates.default.search") %> ..." onFocus="this.select()" />
+</form>
+<% } %>
+
+</div>
+
+<%-- Show all sections, and then global actions now --%>
+<%--
+<i><a href="<%= ms_mainurl %>"><%= m_wcengine.getName() %></a></i>
+<% for(int j = 2; j <= m_menu.getNumItems(3); j++) { %>
+  | <a href="<%= m_menu.getLink(3, j) %>"><%= m_menu.getText(3, j) %></a> 
+<% } %>
+<b>||</b>
+<% for(int j = 2; j <= m_menu.getNumItems(4); j++) { %>
+  <a href="<%= m_menu.getLink(4, j) %>"><%= m_menu.getText(4, j) %></a> |
+<% } %>
+--%>
+<%-- Show page actions now --%>
+<%--
+|
+<% for(int j = 2; j <= m_menu.getNumItems(2); j++) { %>
+  <a href="<%= m_menu.getLink(2, j) %>"><%= m_menu.getText(2, j) %></a> |
+<% } %>
+--%>
+
+
+<%--
+<% for(int i = 0; i < m_locales.length; i++) {
+     //m_wlh2.setAction("setsessionlocale"); 
+     //m_wlh2.setAnchor(""); 
+     //m_wlh2.getExtraparams().put("locale", m_locales[i].toString()); 
+%>
+<a href="<%= m_wikiwebctx.toURLString(m_wlh2) %>"><%= m_locales[i].toString() %></a> 
+<% } %>
+
+--%>
+
+<%--
+ <a href="<%= ms_detailslink %>"><%= m_wi18n.str("templates.default.details") %></a>
+--%>
+

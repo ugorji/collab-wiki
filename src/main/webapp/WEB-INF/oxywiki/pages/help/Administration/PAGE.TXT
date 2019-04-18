@@ -1,0 +1,111 @@
+{pi:freelink=false /}
+
+The following can be done:
+ * Engine wide actions
+   * Reset the whole Wiki
+   * Reload the Engine properties
+   * Edit config file: oxywiki.properties 
+ * Section specific actions
+   * Add a section
+   * Remove a section
+   * Load / Unload / Reload a section
+   * Edit config file: oxywiki-$sectionname.properties 
+
+Each of these has their different use cases.
+
+More information can be got from the configuration help (on how to configure things).
+
+To help facilitate any of these, the builtin section should be configured. This is because
+ * At least one section must exist for you to do admin functions
+ * You should not unload that section
+ * The built-in section does not support anything (e.g. edits, review, has no pages, etc)
+   * Its sole purpose is for setting up other things
+
+So to do the functions below, your best bet is to 
+ * Go to the builtin section
+   * from 'sys info'
+ * Go to admin
+   * from 'admin'
+ * Proceed to do what you want to do
+
+=== Lock / Unlock Engine (Make it read-only)
+
+This allows you to lock the engine.
+
+A ** long term lock ** can be placed on the engine. When this is set, only read-only and admin 
+actions are allowed. Consequently, users can still browse pages, but cannot edit.
+
+A good use case for this is
+# Backend-provider (e.g. Perforce) is locked, so no-one can write to it. This allows you gracefully \
+  lock the Wiki interface also.
+# When a bunch of admin actions are to be done, and you want to ensure that no-one does anything while these \
+  actions are being done.
+
+~~ In addition, a short-term-lock is acquired temporarily whenever an admin action is being done. This should 
+typically not affect the general user ~~
+
+=== Reset engine 
+
+This reloads everything. It basically
+ * closes everything
+ * re-initializes from the properties files
+
+It is useful when U just want to do a reboot.
+
+=== Reload Engine 
+
+This just reloads the overall engine, without touching the section handlers. 
+Basically, it closes engine-wide handlers, reloads properties from 
+oxywiki.properties, and re-creates engine-wide handlers.
+
+However, it doesn't update sections. Updating sections is a more expensive and 
+time consuming operation, since the indices have to be recreated (which may take a 
+while depending on the provider implementation).
+
+The big use-case, is for adding or removing a section. More info is below.
+
+=== Add a section 
+
+This can be completely done from the admin screen.
+
+This use case is done as below:
+
+ * Add the section name to the oxywiki.properties, under the key ''net.ugorji.oxygen.wiki.sections''
+   * You can edit the oxywiki.properties from the admin screen
+ * Reload the engine (from the admin screen)
+   * this adds the new section name to the list of known sections
+ * Add the appropriate oxywiki-$sectionname.properties
+   * You can edit (ie create) it from the admin screen
+ * Load that section (from the admin screen)
+
+=== Remove a section 
+
+This can be completely done from the admin screen.
+
+This use case is done as below:
+
+ * Unload that section (from the admin screen)
+ * Remove the section name from the oxywiki.properties, under the key ''net.ugorji.oxygen.wiki.sections''
+   * You can edit the oxywiki.properties from the admin screen
+ * Optionally, you can remove the appropriate oxywiki-$sectionname.properties
+   * ''If there, it does no harm''
+ * Reload the engine (from the admin screen)
+   * this removes the section name from the list of known sections
+
+=== Load / Unload / Reload a section 
+
+This is used to load or unload or reload a section.
+
+You can do this when you 
+ * change the configuration of a section (oxywiki-$sectionname.properties)
+ * recreate the index for any reason
+   * ''e.g. you added pages without going through the wiki interface (at which point the index'es will be out of sync)''
+ * etc.
+
+These use cases are done as below:
+ 
+ * Go to the admin screens
+ * Do what you want to do
+
+Jdk wiki logging, should take parameter saying if it should append or overwrite
+

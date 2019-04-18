@@ -1,0 +1,19 @@
+
+This wiki tries to simulate an environment where pages can be published and unpublished.
+
+When a page is published, it is indexed and can be browsed, searched for, etc. 
+
+When un-published, it just stays there.
+
+It can be listed by folks who look at the allpages action, and can be edited.
+
+By default, you configure which groups have access to publish/un-publish pages.
+* With access, a checkbox is presented on the edit screen, for you to change the published flag
+
+==== Configuration
+
+{{{
+net.ugorji.oxygen.wiki.only.index.published.pages    = false
+net.ugorji.oxygen.wiki.publisher_groups              = NULL
+}}}
+

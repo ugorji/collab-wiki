@@ -1,0 +1,22 @@
+
+The engine stores its runtime configuration in a given file. 
+
+This file can be configured, and persisted in any way (in line with how we persist pages).
+
+The runtime configuration is a properties file, which holds user preferences, etc.
+
+== Built in Mechanisms 
+
+ * DefaultFileSystemRuntimePersistenceManager
+
+== Configuration 
+
+You configure these by editing your oxywiki.properties.
+
+Basically, you define the property net.ugorji.oxygen.wiki.runtime.persistence.manager
+
+Samples are below:
+
+{{{
+net.ugorji.oxygen.wiki.runtime.persistence.manager   = net.ugorji.oxygen.wiki.extensions.filesystem.DefaultFileSystemRuntimePersistenceManager
+}}}

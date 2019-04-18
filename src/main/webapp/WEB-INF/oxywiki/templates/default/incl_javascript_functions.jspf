@@ -1,0 +1,32 @@
+
+<script LANGUAGE="JavaScript">
+<!--
+function oxywiki_js_confirmfordelete(pagerep2, href2) {
+  alert("help");
+  if(confirm("<%= m_wi18n.str("templates.default.delete_prompt") %>" + pagerep2)) {
+    location.href = href2;
+  }
+}
+function oxywiki_js_updateformenu(mymenu) {
+  myurl = mymenu.options[mymenu.selectedIndex].value;
+  mymenu.selectedIndex = 0;
+  if(myurl != "") {
+    location.href = myurl;
+  }
+}
+
+
+function oxywiki_updateusersession(aStr0, aStr1) {
+  var oxypars = aStr0 + "=" + encodeURIComponent(aStr1);	
+  var oxyAjax = new Ajax.Request('<%= ms_updateusersessionlink %>', {method: 'post', postBody: oxypars, onComplete: oxywiki_reload_current_page });
+} 
+
+function oxywiki_reload_current_page() {
+  location.href = '<%= ms_currentactionlink %>';
+} 
+
+var cmCtxPath = '<%= ms_ctxpath %>';
+var oxywiki_js_cmCtxPath = '<%= ms_ctxpath %>';
+// -->
+</script>
+

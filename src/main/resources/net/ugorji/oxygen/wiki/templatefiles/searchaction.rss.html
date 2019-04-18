@@ -1,0 +1,10 @@
+<dl>
+<dt>${i18n.str("jspviews.search.score")}</dt>
+<dd>${score}</dd>
+<dt>${i18n.str("jspviews.search.last_change")}</dt>
+<dd>${message}</dd>
+<dd>${comments}</dd>
+<#if lastchange?exists>
+<dd>${lastchange.toHTMLString()}</dd>
+</#if>
+</dl>

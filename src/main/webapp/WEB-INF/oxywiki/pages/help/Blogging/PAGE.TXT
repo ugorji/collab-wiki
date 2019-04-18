@@ -1,0 +1,42 @@
+
+From the wikipedia, a blog (or weblog) is defined as below:
+
+~~ A weblog (usually shortened to blog, but occasionally spelled web
+log) is a web-based publication consisting primarily of periodic
+articles (normally in reverse chronological order). ~~
+
+This wiki provides blogging functionality, by leveraging the content
+management abilities it has, and adding the ability to see a calendar
+with access to pages updated in a given day, month or year.
+
+So you create your pages as normal, and blogging capabilities are
+implicit, and we add chronological browsing to complete the blogging
+experience. 
+
+= Configuration 
+
+You will need to put the calendar is a place where it is always
+available on the page. 
+
+This can be done by leveraging the template provided.
+
+For example, the default templates take a parameter, which will put
+the calendar, either in the left column, or the right column.
+
+You configure these by editing your oxywiki.properties, 
+or the corresponding oxywiki-$section.properties.
+
+The calendar also leverages the property net.ugorji.oxygen.wiki.show.details, to
+know whether to show details on pages or not.
+
+Note that we only support a calendar view if all the details of the pages 
+are indexed. If not, then the dates in the Lucene Index will not be in sync 
+with the dates from the repository, causing problems on the calendar view.
+
+Sample to configure things which affect the display:
+{{{
+  # either Left or Right. Anything else is ignored, and calendar is not shown
+  net.ugorji.oxygen.wiki.template.jsp.calendar.location  = Left
+  net.ugorji.oxygen.wiki.index.details                   = true
+}}}
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-app id="oxywiki" 
+             xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" 
+             version="1.0" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
+  <portlet id="OxygenWikiPortlet">
+    <portlet-name>OxygenWikiPortlet</portlet-name>
+    <portlet-class>net.ugorji.oxygen.wiki.WikiPortlet</portlet-class>
+    <expiration-cache>1</expiration-cache>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <portlet-info>
+      <title>Oxygen Wiki Portlet</title>
+      <short-title>oxywiki</short-title>
+      <keywords>Wiki</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>net.ugorji.oxygen.wiki.username</name>
+        <value/>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  <portlet id="HelloPortlet">
+    <portlet-name>HelloPortlet</portlet-name>
+    <portlet-class>net.ugorji.oxygen.wiki.extensions.HelloPortlet</portlet-class>
+    <supports>
+      <mime-type>text/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Oxygen Wiki Hello Portlet</title>
+      <short-title>oxywikihello</short-title>
+      <keywords>Wiki hello</keywords>
+    </portlet-info>
+  </portlet>
+</portlet-app>
+

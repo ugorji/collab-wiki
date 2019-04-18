@@ -1,0 +1,33 @@
+
+<style type="text/css" media="screen,projection,print" >
+/* <![CDATA[ */
+body {
+  margin: 5px 1%;
+  width: 98%;
+}
+.leftmenu {
+  float: left;
+  margin: 0px 20px 40px 0px;
+}
+.rightmenu {
+  float: right;
+  margin: 0px 0px 40px 20px;
+}
+.mainwikipage {
+  float: none;
+}
+/* ]]> */
+</style>
+<% if(mb_hideMenuOnPrintMedia) { %>
+<link rel="stylesheet" media="print" type="text/css" href="<%= ms_ctxpath %>/stylesheets/print.css" />
+<style type="text/css" media="print" >
+/* <![CDATA[ */
+#oxywiki_view3navwrap, .oxywiki_menu_links, .leftmenu, .rightmenu, .topmenu, .bottommenu, #navigation, #footer, .breadcrumbs, .noprint { display: none; }
+/* ]]> */</style>
+<% } %>
+
+<script language="javascript">
+<!--
+window.onload = oxywiki_view3_menu_startList;
+-->
+</script>

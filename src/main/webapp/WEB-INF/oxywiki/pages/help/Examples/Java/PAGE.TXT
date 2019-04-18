@@ -1,0 +1,70 @@
+{code:java}
+
+package net.ugorji.oxygen.wiki;
+
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import javax.servlet.*;
+
+public class WikiEngine {
+  
+  private Properties props = new Properties();
+  private Map wceMap = new HashMap();
+  
+  private ServletContext sctx;
+  
+  private WikiEngine(ServletContext _sctx) throws Exception { 
+    //load the WikiEngine
+    sctx = _sctx;
+    props = new Properties();
+
+    //load properties from file
+    InputStream is = sctx.getResourceAsStream(WikiConstants.Engine_Props_File_Prefix + ".properties");
+    if(is != null) {
+      props.load(is);
+      is.close();
+    }
+
+    props.setProperty(WikiConstants.WEB_ROOT_DIR_KEY, sctx.getRealPath("/"));
+
+    String s = props.getProperty(WikiConstants.Engine_Categories_Key);
+    StringTokenizer stz = new StringTokenizer(s, ", ");
+    while(stz.hasMoreTokens()) {
+      String tok = stz.nextToken();
+      WikiCategoryEngine wce = new WikiCategoryEngine(this, tok);
+    }
+  }
+  
+  protected void addWikiCategoryEngine(WikiCategoryEngine wce) {
+    wceMap.put(wce.getName(), wce);
+  }
+  
+  public ServletContext getServletContext() {
+    return sctx;
+  }
+  
+  public WikiCategoryEngine getWikiCategoryEngine(String _name) {
+    return (WikiCategoryEngine)wceMap.get(_name);
+  }
+  
+  public void reloadWikiCategoryEngine(String _name) throws Exception {
+    WikiCategoryEngine wce = (WikiCategoryEngine)wceMap.remove(_name);
+    wce = new WikiCategoryEngine(this, _name);
+  }
+  
+  public String[] getWikiCategoryNames() {
+    return (String[])wceMap.keySet().toArray(new String[0]);
+  }
+  
+  protected String getProperty(String key) {
+    return props.getProperty(key);
+  }
+  
+  protected Properties getProperties() {
+    return props;
+  }
+  
+}
+
+{/code}

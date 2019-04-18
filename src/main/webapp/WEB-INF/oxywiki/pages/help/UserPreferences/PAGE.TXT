@@ -1,0 +1,72 @@
+
+User Preferences allow you to 
+ * Subscribe to a bunch of pages
+ * Set an email address for yourself
+
+== Change your display name 
+
+By default, the engine assumes your username is the first value got in this search order
+ * from an override (which sets your username in a long-living cookie)
+ * from the username U are logged in with
+ * from your remote IP address
+
+Consequently, we allow you to set your preferred username (and thus override it).
+
+However, this can allow folks impersonate someone else, and change their preferences.
+
+To alleviate this, a configuration parameter can be set, to either enable or disable this.
+Set this in your oxywiki-$section.properties file
+ * net.ugorji.oxygen.wiki.username.set.supported (set to true or false)
+
+In summary, configuration options (to be set at oxywiki.properties or oxywiki-$section.properties file):
+{{{
+  net.ugorji.oxygen.wiki.username.set.supported = true | false
+}}}
+
+== Subscribing to pages 
+
+To subscribe to a bunch of pages, put a regular expression which matches the pages you want to receive email notification on.
+
+The regular expression matches on the fully qualified name of a page. For example, the page called 'Main' in the section 'cce' has the fully qualified name {{ cce:Main }}
+
+The user configures a regular expression, and if the fully qualified name of the page created/edited/deleted matches the regular expression, a notification email is sent to the user.
+
+Some sample regular expressions are:
+ * {{ .* }} - send email when any page is created/edited/deleted
+ * {{ cce:Ma.* }} - send email when any page starting with ''Ma'', within the ''cce'' section, is created/edited/deleted
+ * {{ cce:Ma.*|sandbox:.*|prologue.*|users:Ugorji/.* }} - send email when any page within the ''cce'' section starts with ''Ma'', OR any page within the ''sandbox'' section, OR any page whose fully qualified name starts with ''prologue'', OR any page within the ''users'' section whose name starts with ''Ugorji/'' 
+
+=== Customizing the language for your user interface
+
+You can customize what language your user interface is presented with.
+This is done by selecting a locale from the list specified. The wiki is configured with a set
+of bundled languages, and a user can set one to be used when using the wiki.
+
+=== Changing your view'ing displays
+
+The view can be customized. Some folks want to always see attachments, some want to always see details, etc.
+
+The userpreferences screen provides a way to change this.
+
+The user can select what they want to be shown by default, and that is shown.
+
+The values there are (if checked, these are shown by default on every page):
+* details
+* pageinfo
+* attachments
+* reviews
+* inlinereviews
+* toplinks
+* nameinpage
+
+== Where are they stored 
+
+User Preferences apply across the whole wiki, so apply across sections.
+
+Consequently, the overall WikiEngine handles this.
+
+The user preferences are stored in a file on the file system. The location can be configured in the oxywiki.properties file. E.g.
+ * `` net.ugorji.oxygen.manager.userpreferences.file = /home/userpreferences.properties ``
+
+By default, if not speciifed, it is stored in the config directory as file userpreferences.file
+

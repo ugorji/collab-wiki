@@ -1,0 +1,57 @@
+plugins {
+    id 'war'
+    id 'org.gretty' version '2.2.0'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation project(':java-common'),
+        project(':java-markup'),
+        project(':java-web'),
+        project(':web-common')
+
+    implementation 'org.apache.lucene:lucene-core:2.9.4',
+        'javax.servlet:javax.servlet-api:4.0.1',
+        'javax.portlet:portlet-api:3.0.1',
+        'net.sf.ehcache:ehcache:2.10.6',
+        // ... ... from jcenter
+        'org.apache.bsf:com.springsource.org.apache.bsf:2.4.0',
+        'com.kenai.nbpwr:com-sun-syndication-feed:1.0-201002241208',
+        'apache-httpclient:commons-httpclient:3.1'
+}
+
+war {
+    with copySpec {
+        from new File(project(':web-common').projectDir, 'src/main/webapp')
+    }
+}
+
+gretty {
+    classPath "${projectDir}/build/collab-app/config"
+    //classpath "${buildDir}/collab-app/config"
+}
+
+task copyConfig(type: Copy) {
+    doFirst {
+        mkdir "$buildDir/collab-app/config"
+        mkdir "$buildDir/collab-app/pages/sandbox"
+        mkdir "$buildDir/collab-app/pages/builtin"
+    }
+    from "${projectDir}/src/config"
+    into "$buildDir/collab-app/config"
+}
+
+task copyPages(type: Copy) {
+    from("${projectDir}/src/main/webapp/WEB-INF/oxywiki/pages") {
+        include "sandbox/**", "builtin/**"
+    }
+    into "$buildDir/collab-app/pages"
+}
+
+assemble.dependsOn copyPages
+copyPages.dependsOn copyConfig
+// Test this using gradle assemble appRunWar

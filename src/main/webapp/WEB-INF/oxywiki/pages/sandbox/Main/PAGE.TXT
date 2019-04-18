@@ -1,0 +1,56 @@
+
+== Sandbox
+Welcome to the play area of the naigeegroup wiki
+
+The following pages are available:
+ * Main2
+ * Linked
+
+=== Misc ** Thank you ** hello ~~ sir [hi|Main] ~~
+
+{script:beanshell| admin,operator}
+wikiWriter.write("What is it???");
+{/script}
+
+{script}
+import net.ugorji.oxygen.wiki.*;
+import net.ugorji.oxygen.web.*;
+wikiWriter.write("<pre>");
+wp = wikiRenderContext.get(WikiConstants.PAGE_KEY);
+wce = WikiLocal.getWikiCategoryEngine();
+webctx = WebLocal.getWebInteractionContext();
+wikiWriter.write("wce.getName(): " + wce.getName() + "\n");
+wikiWriter.write("wp.getAttributes(): " + wp.getAttributes() + "\n");
+wikiWriter.write("</pre>");
+{/script}
+
+=== Misc 2
+
+Thank you.
+
+=== Testing Escaped Tokens
+
+test out escaped stuff with the sandbox
+
+ `ugorjid@bea.com  \\
+ `http://www.cnn.com/bea/cde  \\
+  `Abc/Def/Ghi \\
+  `abc.def.ghi \\
+  `abc-def-ghi \\
+  ugorjid@bea.com  \\
+  http://www.cnn.com/bea/cde  \\
+  Abc/Def/Ghi \\
+  abc.def.ghi \\
+  abc-def-ghi \\
+
+# `ugorjid@bea.comXX  \\
+# `http://www.cnn.com/bea/cdeXX  \\
+#  `Abc/Def/GhiXX \\
+#  `abc.def.ghiXX \\
+#  `abc-def-ghiXX \\
+#  ugorjid@bea.comXX  \\
+#  http://www.cnn.com/bea/cdeXX  \\
+#  Abc/Def/GhiXX \\
+#  abc.def.ghiXX \\
+#  abc-def-ghiXX \\
+

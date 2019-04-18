@@ -1,0 +1,18 @@
+<%@ page 
+    errorPage="jsp-error.jsp"
+    import="net.ugorji.oxygen.wiki.*,
+	    net.ugorji.oxygen.util.*,
+	    net.ugorji.oxygen.web.*,
+        net.ugorji.oxygen.markup.MarkupUtils,
+	    java.io.*,
+	    java.util.*,
+	    java.text.DecimalFormat,
+	    java.text.DateFormat,
+	    java.text.SimpleDateFormat" 
+%><%
+  //cannot be instance variables, because the locale can change at will
+  DateFormat df = WikiViewUtils.getDateTimeFormat(WikiLocal.getWikiLinkHolder().getLocale());
+  WebInteractionContext wikiwebctx = WebLocal.getWebInteractionContext();
+  I18n wi18n = WebLocal.getI18n();
+%>
+<%--             oxygen.wiki.indexing.WikiIndexingManager, --%>

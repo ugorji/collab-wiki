@@ -1,0 +1,21 @@
+# all default macros
+
+org.radeox.macro.CodeMacro
+org.radeox.macro.FilePathMacro
+org.radeox.macro.HelloWorldMacro
+org.radeox.macro.IsbnMacro
+org.radeox.macro.LinkMacro
+org.radeox.macro.MailToMacro
+org.radeox.macro.MacroListMacro
+org.radeox.macro.QuoteMacro
+org.radeox.macro.RfcMacro
+org.radeox.macro.TableMacro
+
+# Comment out some *default* macros which were did not close their streams
+# These prevented the webapp from being undeployed
+#org.radeox.macro.ApiDocMacro
+#org.radeox.macro.ApiMacro
+#org.radeox.macro.AsinMacro
+#org.radeox.macro.InterWikiMacro
+#org.radeox.macro.XrefMacro
+

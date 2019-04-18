@@ -1,0 +1,1920 @@
+
+fix the default file system
+externalize all messages (so that Yngwie can localize them)
+
+<%= wi18n.str("jspviews.search.") %>
+
+test:
+- edit.jsp (look for the edit_helper_msg at bottom
+- editnotsupported (try and edit help page, see if we get proper msg)
+- locks message (on edit page, and when lock not acquired)
+- page deleted
+- recent changes
+- sysinfo
+
+How to int'l
+- allow admin say that the default locale is __blah__ - language and country (for the category engine)
+- allow user pick what their locale is??? yes (set in user prefs) - language and country
+- category defines the locales supported.
+- user can select one, and it is stored in their user prefs (and then in their session)
+- a function in Locale WikiUtils.getLocaleForUser(request) 
+  - will look in their session.
+  - if not defined, 
+    - get from runtime property, 
+    - use that if it is one of the supported locales of the wiki engine, else use the default for the wiki engine
+    - and then set in session
+  - return it from session
+- alas, we have Locale WikiUtils.getLocaleForUser(request) AND void WikiUtils.setLocaleForUser(request, Locale)
+- All interactions of WikiUtils.i18n() do not exist. 
+  - instead, use WikiCategoryEngine.getWikiI18n()
+
+*** NOTES ***
+content can be in any char set
+but the UI is in a pre-defined char set
+
+Locale[] WCE.getSupportedUILocales();
+Locale WCE.getDefaultLocale();
+boolean isSupportedLocale(Locale);
+
+user prefs lists them
+user selects one
+- select language & country
+e.g. en, US | en, GB
+
+change userprefs reg exp matching to use : (not /)
+- (update the ones stored in BEA space)
+
+Update UserPrefs/PAGE.TXT and Intl/PAGE.TXT
+
+
+========================
+
+Have 
+- Default filesystem provider
+- have a Helper
+
+- for p4,
+  have a helper
+  extend default file system, passing in the helper
+
+e.g.
+  new DefaultFileSystemProvider(FSHelper, 
+
+in .OXYWIKI/
+  PAGE.TXT.$ver.TXT
+  PAGE.TXT.$ver.METADATA.TXT
+  PAGE.TXT.HEAD_VERSION_NUMBER.TXT
+
+to update,
+- remove all .OXYWIKI directory
+
+update getChangeInfo, in P4Helper, to handle the TODO there
+
+test out (on sandbox, and on p4test):
+- add page
+- edit page
+- delete page
+- view page history
+
+- add attachment
+- delete attachment
+- view attachment history
+
+- add review
+- remove review comment
+
+REVIEW.$longdate.TXT
+REVIEW.$longdate.METADATA.TXT
+
+PAGE.TXT
+REVIEW.$longdate.TXT
+other files
+.OXYWIKI/
+  all metadata, version info, etc is here
+
+.$num.$ext
+
+ISSUES
+=======
+
+user just had a blank file
+- user updates it.
+  it believes the update is a v1.
+
+when editing
+- if there's no v1 in the repository, put the latest copy there
+- then add a new one
+
+check diff's
+check p4 versions of an attachment
+ensure streams are closed
+
+gracefully handle when p4 is down.
+if p4 is down, do not put anything into the cache
+
+
+how to handle serialization
+- make it transient
+- when storing, store the filepath
+- when reading, restore the virtualfile
+
+=======
+
+check for attachments with support for
+- ensuring that, if no repo info available, we put the old file in place
+
+=======
+
+There is a macro, which the user can put anywhere (e.g. in left or right)
+- the macro stores it's date in the session, (which is always the 15th of the month)
+- it uses this to refresh it's state everytime
+
+There is an action, which is only available from the macro
+(ie it's not on the menu)
+
+There is a jspview page to go with the macro
+- calendar.jsp
+  displays a calendar
+  get the BlogViewHelper from the model
+- timebasedview.jsp
+  get the BlogViewHelper from the model
+  for each wikipage
+    #if showOnlyTitles:
+    bvh.writeHTML(wp...)
+    ($numComments comments) More ... 
+    <hr/>
+
+WikiTimeBasedViewHelper(WCE, int year, int month, int day)
+  Wikipage[] getPages()
+  writeHTML(WikiPage wp, httpreq, httpres)  
+  numWeeks
+  int[] daysInWeek
+  int[] daysInWeekFilled
+  Date prevMonth
+  Date nextMonth
+  Date nextYear
+  Date nextMonth
+  List daysWithData
+    - list of Integer objects
+
+TimeBasedViewAction
+  ... simple ... load model, delegate to jsp page
+
+CalendarMacro
+  ... simple ... load model, delegate to jsp page
+  just includes the calendar.jsp
+
+Month Year
+<- -> <- ->
+Rows
+
+Get from the Calendar
+
+============================
+
+Calendar:
+- template uses: 
+net.ugorji.oxygen.wiki.template.jsp.calendar.location (Left or Right)
+- calendar.jsp et al use net.ugorji.oxygen.wiki.calendar.title
+
+- let wch help get a daydate for you
+- only output date if diff from last date
+- 
+
+showdetailsoncalendarview
+- if true, 
+
+ensure test.jsps works
+
+
+
+
+
+let there be 1 attribute for the section, which says 
+- whether we want to show details by default
+  property of the section
+- everyone can use it (no need to pass it around, like in the servlet request)
+
+net.ugorji.oxygen.wiki.show.details.by.default
+
+On Menu
+- Help
+- Feedback ...
+- 
+
+
+Change session handling, so there's only 1 session map to use
+
+let all template views leverage the calendar
+
+# 
+
+incl_body_using_table
+- 3 more variables are set:
+  - table_menu_to_use (jscookmenu | dhtml | etc)
+
+Update
+  
+
+Blogging
+- There is a calendar view in the wiki
+- templates show it iff you put the property where the calendar should be shown
+- U can also use it as a macro, and put it in a page which is always available
+- It allows you browse to see pages which have been created recently.
+- thatz the whole idea of the blog. Calendar based browsing of published information.
+
+==============
+
+mAKING IT A PORTLET
+
+=================
+
+Note:
+- we cannot do forwarding
+- we need to have a different portlet template (based off view3.jsp)
+  no <html>, <head> or <body> in it
+
+Note:
+- WikiServlet will store the WikiWebContext in the request attribute
+- WikiPortlet will store the WikiWebContext in the portlet request attribute
+- this way, any jsp can get it from 
+    request.getAttribute(...)
+
+view_base.jsp?tmpl.view.type=view3&tmpl.view.fullpage=false
+
+
+- The thing is that, when we include, we should not be 
+  - altering request parameters
+  - altering path components
+
+WikiUtils.getCategoryURL
+========================
+Note:
+- The RSS stuff should work outside of a portal
+- So it should use the standard way of getting a category url
+- same thing with WikiEmailNotifier
+
+
+WikiLinkHolder
+==============
+getURLGivenRelative
+getWikiURL
+
+# The WikiWebContext takes care of creating a WikiLinkHolder from itself
+
+# How do I make it, that the templates include the menu's et al.
+
+- The user will have to include the stylesheets and the javascript functions in his portal.
+- Since we currently include them only in the head.
+
+make reset_index an admin action 
+- on startup, if index is not found, we re-index
+- else, admin can automatically call re-index at any time (s'long as the section is shut down)
+
+Write that Oxygen Wiki has portlet support.
+
+Portlet Support
+===============
+WikiPortlet.java
+WikiWebPortletContext.java
+portlet.xml
+
+Indexing
+========
+IndexingManager
+- on startup, if the index does not exist, recreate it from scratch
+- also, there is a way for the index to be recreated
+  (during which time, no-one else can access it)
+
+---------------
+
+What about where we try to create full links
+- rss
+- email notification
+  (thatz ok. Those areas should use the links directly to the webapp (not to the portlet).
+
+
+======================
+
+Note:
+- WikiUtils.getCategoryURL should go away. 
+  The ability to encode a URL or decode a Request, should all-in-one fully lie with WikiWebContext
+  e.g. 
+
+  In WikiLinkHolder, 
+  - getWikiURL(String action2, boolean includePage)
+    that should be a function of WikiWebContext
+    (instead, it should be)
+    - 
+  In WikiUtils
+  - getCategoryURL(...)
+    this should be a function of WikiWebContext
+
+We should have
+  WikiWebContext
+  # it knows the WCE, 
+  - getEncodedURL(WikiLinkHolder wlh)
+
+WikiServletContext
+  - has some static methods, which rss and email notification use
+  - static String getServletURL(WikiLinkHolder) - this is what used to get getCategoryURL(...)
+  - 
+
+getWikiURL always delegates to WikiWebContext,
+since we make the assumption that WikiWebContext must be set
+
+=============
+
+As a portlet, most of our things will be done during Actions.
+Look for who calls things that require RenderResponse/RenderRequest.
+
+Put the preferences in the portlet.xml
+
+change view_base files (to not call ? et al)
+- add extra parameters to WikiLinkHolder
+
+
+# 
+- The WikiWebController already assumes the WikiLinkHolder is in the request attribute
+- if 
+
+processaCTION
+- sets render parameters
+
+render
+- clears render parameters
+
+Note:
+- use processAction only if we want to:
+  - admin
+  - etc
+- else, always use render
+
+- only use render
+- processAction(...) is a no-op
+- if another portlet is requested, then there is no render request
+- so we depend on some state stored in the portlet session, to create a WikiLinkHolder
+
+use processAction for
+
+- change WikiWebAction to have 3 methods
+  - processAction (this just does some stuff, and puts a WikiLinkHolder in the session)
+  - render        (this takes the WikiLinkHolder from the session, and renders for it)
+  - includeView   
+
+sendRedirect(...) is always done within the render call
+
+WikiWebController 
+- processAction
+  - delegates to WikiWebAction.processAction(...)
+    - this does some work, and then stores the WikiLinkHolder in the session (so render can use it)
+    - # sometimes, a redirect is called here. (e.g. if AdminAction, etc). This is how an action says that it does not control its own rendering.
+- render
+  - delegates to WikiWebAction.render(...)
+    - this just does a render, based on the WikiLinkHolder in the request attribute (or session)
+
+WikiUtils.getWikiLinkHolder(request)
+- gets WikiLinkHolder from request attribute
+  - if not there, gets it from request session
+
+Note:
+- the session always has the WikiLinkHolder to render with
+  - this is always a view type WikiLinkHolder
+
+Sometimes, processAction does nothing.
+
+processAction is used for:
+# All here use sendRedirect OR request.getParameter(...)
+- ./AdminAction.java
+- ./AttachmentsAction.java (uses sendRedirect, getContentLength, getInputStream)
+- ./DeleteAttachmentAction.java
+- ./CmdLineAction.java
+- ./EditAction.java
+- ./MiscAction.java
+- ./ReviewAction.java
+- ./SetSessionLocaleAction.java
+- ./UserPrefsAction.java
+
+WikiUtils.getWikiPage
+  - creates a WikiProvidedObject from the WikiLinkHolder
+
+We have WikiUtils
+  getWikiPage
+  getWikiI18n
+  getWikiCategoryEngine
+  getWikiEngine
+  ...
+but no setters there
+
+The setter is only for WikiLinkHolder
+
+Everyone works off of WikiLinkHolder
+
+# somehow, we need to tell the servlet, that it shouldn't call render
+- maybe have processAction return true|false
+  saying whether it did all the processing.
+
+To Do
+=====
+- In the default template
+  - do not add parameters to the string
+  - instead, add parameters to the WikiLinkHolder, and then ask WikiWebContext to give you a URL.
+  - (this will allow support for the portlets)
+
+
+- If all is based off WikiLinkHolder
+  - then we're good to go
+  - we check the parameters from there
+  - 
+
+- getShowHide
+- 
+  - clone the WikiLinkHolder
+  - change some things in the parameters
+  - getURL from WikiWebContext
+
+
+have to work on
+  ./web/WEB-INF/oxywiki/jspviews/attachments.jsp
+./web/WEB-INF/oxywiki/templates/default/incl_imports_and_variables.jsp
+
+====
+
+Need to have processAction return some thing.
+an int, which says whether more work is needed by the render to do.
+
+usually, if U do a sendRedirect, then return 
+- REQUEST_PROCESSING_COMPLETED
+- REQUEST_PROCESSING_ACTION_COMPLETED
+- 
+
+status
+- ACTION_PROCESSION_COMPLETED
+- RENDER_COMPLETED
+- REQUEST_PROCESSING_COMPLETED
+
+
+================
+
+Testing portlet:
+- run ant deploy.portlet (from wiki2 directory)
+
+
+
+==============
+
+Look for all places which have ? (and ensure we use the proper way to generate the url)
+
+getURL(String action, String[] extraparams)
+admin.jsp
+attachmentinfo.jsp
+pageinfo.jsp
+
+===========
+
+Portlet:
+- Admin is still broken
+- UserPreferences is broken
+- edit is broken
+- ...
+
+I should change WikiWebappListener to a startup-servlet.
+That should take care of things.
+
+==========
+
+FIXING LAST SET OF PORTLET ISSUES:
+----------------------------------
+
+There should be no calls to .getParameter in oxywiki/jspviews
+[DONE]
+----
+request.setAttribute should not be used in crossing from processAction
+to render. This is only applicable for Actions with a method like
+handlePostXXX .
+[DONE]
+----
+processAction should never call stuff which changes the view.
+e.g. in EditAction, from handlePostEdit, we were calling handleEdit
+(bad)
+[DONE]
+----
+render should only depend on WikiLinkHolder
+[DONE]
+----
+try and share code between EditAction and ReviewAction 
+  (since they both support the same things i.e. save, cancel, preview,
+  re-edit)
+- handleEditable should be totally different
+- handlePostEditableSave should be totally different
+- both reviews.jsp and edit.jsp will have to change to use editable
+  (instead of review or edit)
+    - preSaveCheck, savePersist
+    - previewtop.action???
+[DONE]
+----
+(Look at the following)
+CmdLineAction done
+AdminAction   done
+EditAction    done
+ReviewAction  done
+[DONE]
+
+----
+sendRedirect called from within processAction will not work, since the
+PortletRequest there is an ActionRequest, and ActionRequest does not
+have a call to sendRedirect.
+
+So we will need to have a way to show the contents of the page,
+without doing a sendRedirect from the actions.
+
+./AdminAction.java
+  sendRedirect basically sends back to ADMIN render, so we can just leverage the render
+
+  admin and editconfig should be 2 diff functions, 
+  - both will share the admin.jsp
+  - but both will exist as 2 diff functions
+[DONE]
+./AttachmentsAction.java
+  sendRedirect basically sends back to ADMIN render, so we can just leverage the render
+[DONE]
+./DeleteAttachmentAction.java
+  sendRedirect basically sends back to SERVLET_ACTION_ATTACHMENTS
+[DONE]
+./EditableAction.java
+  sendRedirect basically sends back to SERVLET_ACTION_VIEW, or to its own action
+./EditAction.java
+  sendRedirect basically sends back to SERVLET_ACTION_VIEW
+
+  cancel and save should send you back to the view page.
+  - (they should set an attribute on the wlh, to "show.view" = true)
+[DONE]
+./MiscAction.java
+  SERVLET_ACTION_VIEW or SERVLET_ACTION_EDIT
+  - we should allow all take a parameter of page, and use that.
+[DONE]
+./SetSessionLocaleAction.java
+  sendRedirect basically sends back to SERVLET_ACTION_VIEW
+[DONE]
+./UserPrefsAction.java
+  sends to its own action
+[DONE]
+====
+
+Portlet bugs:
+============
+----
+- render does not honor the request parameter (e.g. tmpl.view.type)
+- consequently, all the data which we use, depending on the value of that request parameter, are gone.
+- So, instead, use an engine property to define the type parameter on the jsp view
+[DONE]
+
+----
+WikiWebPortletContext.include can only work from within a RenderRequest.
+(so preview et al are getting CCE)
+- set a key in the attribute
+- if set, then create the insertion, and handle it.
+  wl.getExtraparam("text")
+[DONE]
+
+----
+Add support for text/xml (to support rss)
+Do we need to define the formats of our attachments? (test it - include a .doc, and try to access it)
+- YES
+- So, we'd have to define every format we support in here. this sucks ...
+  (just use */*)
+[DONE]
+
+----
+Update Portlet help page (with more inf0)
+defaults for show should be to show everything ... right now, it's hiding by default
+[DONE]
+
+----
+Attachments are not showing (...) - since their URL is broken when created as an actionURL
+
+Attachments should be served by the servlet directly.
+ie the links should be WikiWebServletContext.getServletURL(...)
+- attachments.jsp (where it lists the attachments, with links to them)
+- WikiParser2Handler.java (where it calls isAttachmentAction)
+[DONE]
+
+TO DO
+====
+CHANGE view.jsp back, so that <link...> and <script...> are not inside <body>
+
+====
+
+Think about this:
+- right now, to support going between processAction and render, we put the WikiLinkHolder in the session.
+- can we use renderParameters???
+  - this will only apply???
+    (not really - since all our links are actionURLs, then we gain nothing from render parameters).
+
+USE POST in portlet forms.
+
+The following links should only go to the servlet url stuff
+- printableview (no - leave as part of the portal???)
+- raw text
+- ...
+
+====
+
+Let us allow users to default their show/hide things
+
+- under user preferences, user can specify
+- show/hide for
+  detailsNecessary
+  showPageinfo
+  showAttachments
+  showReviews
+  showInlineReviews
+  showNameInPage
+  (this is all one parameter: 
+    view_show_by_default.$username = 
+       details, pageinfo, attachments, 
+       reviews, inlinereviews, toplinks, 
+       nameinpage
+    (All of these are a parameter got from like init.properties)
+       net.ugorji.oxygen.wiki.template.jsp.userprefs.show.values =
+  
+  incl_imports_and_variables will create WikiViewUtils.MenuObject
+  
+  WikiViewUtls.getShowHideDefault(WikiWebContext, 
+                                  String reqparam, 
+                                  String keyInUserPrefs, 
+                                  String engineProperty)
+                           
+Menu:
+- An array of WikiViewUtils.MenuObject
+  WikiViewUtils.MenuObject
+    addRow(col, row, link, text)
+    getNumCols()
+    getNumRows(col)
+    getLink(col, row) # both col and row start from 1
+    getText(col, row) # both col and row start from 1
+    
+    public setRow(int col, int row, String link, String text) {
+
+[DONE]
+
+Update the UserPreferences documentation
+
+use just show= for all (not showXXX=true && ..)
+
+====
+
+change boot order for linux(so that windows is started, within 2 seconds)
+use a common set of css styles
+(if possible, co-incide with the CSS styles for 
+use a prefix for all javascript functions et al
+  oxywiki_
+- define them in the template
+- 
+
+./oxywiki/templates/default/view3-menu.js
+./oxywiki/templates/util/JSCookMenu/JSCookMenu.js
+./WEB-INF/oxywiki/jspviews/attachments.jsp
+./WEB-INF/oxywiki/jspviews/edit.jsp
+(done)
+./WEB-INF/oxywiki/jspviews/search.jsp
+./WEB-INF/oxywiki/templates/default/incl_javascript_functions.jsp
+[DONE]
+
+====
+
+Instead of using our custom css styles, we should use the ones
+which are predefined by the portlet spec.
+Style               || Description || Example
+portlet-msg-status  || Status of the current operation. || Progress: 80%
+portlet-msg-info    || Help messages, general additional information, etc. || Info about
+portlet-msg-error   || Error messages. || Portlet not available
+portlet-msg-alert   || Warning messages. || Timeout occurred, try again later
+portlet-msg-success || Verification of the successful completion of a task. || Operation completed successfully
+
+Instead of 
+- wiki
+
+====
+
+Show/Hide should only have the following variables:
+- show
+- hide
+- ver
+
+thatz it ...
+
+- change ...Persist and ...Cancel, to alter the WikiLinkHolder well
+{DONE}
+
+====
+
+Why isn't XML working fine? (for the code)
+
+====
+
+on diff.jsp, allow it take parameters for r1 and r2
+- use radio buttons, with last and 2nd to the last selected by default
+- to do diff, someone should 
+  select from
+  select to
+  click "Diff: on the bottom of the table
+  
+
+=== 
+
+- if a version is specified, template should not show the following
+  - edit
+  - etc 
+    (except it allows you to go back to latest version)
+(DO NOT DO ...)
+
+===
+
+on diff page,
+  Radio Radio Submit_Button (saying just r1sel - r2sel)
+  they are all invisible, but there, and then we make it visible when a radio button is clicked)
+(DONE)
+
+===
+
+When an update is done, write something to the cache manager
+- put(CATEGORY_CACHE_GROUP, "lastupdatedate.$categoryName", Date)
+- 
+(DONE)
+
+===
+
+WikiIndexingManager
+- put index for
+  - contents
+  - last modified
+  - author
+  - last editor
+  - page name
+  - title
+  - labels
+  - attachments
+  - comments ???
+  
+WikiIndexingManager takes a parameter from WCE, that says whether it should 
+load up details.
+
+search should now be additive
+- ie for each form field which is non blank, add that as a union to the search
+  e.g. 
+       search for tupac in contents, where the labels are entertainment and black
+
+SearchAction should call that class
+  - WikiLinkHolder
+      SEARCH_INDEX_CONTENTS = 
+      
+search.jsp should not do anything
+(DONE)
+
+===
+
+lookupPages
+- should this be a function of the PageProvider
+  or of the WikiIndexingManager???
+(DONE)
+
+===
+
+support labels
+- labels are supported (any random string)
+  - on the edit page
+    - put a textbox for labels
+    - (make it an attribute, so it gets stored)
+  - on the search page
+    - put a textbox for labels
+    - honor it within the indexing engine
+  - WikiIndexingManager
+    - index a seperate field for labels
+(DONE)
+
+===
+
+- createIndex
+  - createDocuments given a pagename, and add all those documents to the IndexWriter
+  - if ResetRef(call resetRefForWikiPage)
+  
+We store all documents in a given index
+- we put a type to the documents in the index
+  - if type == page | comments | attachment
+
+When a comment is attached/removed, index it
+when an attachment is attached, index it
+
+WikiIndexingManager
+  getPageReviewNames(String pagename, Date from, Date to)
+  getAttachmentNames(String pagename, Date from, Date to)
+  getPageNames(Date from, Date to)
+  
+Providers
+- String[] getAttachmentNames(String pagerep)
+  //instead of WikiProvidedObject[] getAttachments(String pagerep, boolean detailsNecessary)
+- String[] getPageReviewNames(String pagerep)
+  //instead of WikiProvidedObject[] getPageReviews(String pagerep, boolean detailsNecessary) 
+- remove lookupPages(...)
+(DONE)
+
+===
+
+if someone posts something, and we don't know who it is, use "guest" (or a specified value from the WikiResources.properties).
+e.g. anytime we get attributes, put in a value for "author" if none is specified.
+     - reviews, pages, attachments.
+     - do at stage of WCEWrapper
+(DONE)
+
+=== 
+
+labels are not getting shown (like subscribers)
+(DONE)
+
+===
+
+Make all places where U see "author", "comments", "labels", etc ... make them constants in WikiConstants
+(DONE)
+
+===
+
+show all labels on the field for search, edit - 
+  String[] WikiIndexingManager.getExistingLabels()
+# labels should be individual keywords ... 
+(DONE)
+
+===
+
+search is not working. e.g. if u pass a label, it doesn't show all pages with that label
+put in code, so that AND is not the first thing in the querystring
+(DONE)
+
+===
+
+checkbox does not select all
+(DONE)
+
+===
+
+Figure out a way to have ehcache write to disk everytime a write to the cache happens
+(as opposed to waiting)
+
+Also, test it, by shutting down the VM uncleanly ... and ensure that the cache is not recreated.
+
+Ensure that, on changing things, it goes well into cache
+
+Actually, use a simple cache that just writes files to disk for each object.
+(DONE)
+
+===
+
+SearchAction
+- show all labels as existing
+(DONE)
+
+===
+
+change isNotALink to isALink ... 
+(DONE)
+
+===
+
+search should also search for pagename
+(DONE)
+
+===
+
+WikiWeb?Context.toWikiLinkHolder should ensure to call WikiUtils.getUsablePagename
+(DONE)
+
+===
+
+calendar navigation - change _ to /
+(DONE)
+
+===
+
+Add all actions as external wiki links
+(DONE)
+
+===
+
+during search, the queryparser passes my keywords to be analyzed.
+
+I need a way to tell the queryparser, that some terms should not be analyzed/tokenized,
+but passed as is to the index.
+
+WikiIndexingmanager.getMatchingStringsForQuery(...)
+
+to fix,
+  add WikiIndexingmanager.search(Map m, HitsHandler h)
+  - we construct a boolean query, knowing what the different things should be as appropriate
+  - ...
+  
+(DONE)
+
+===
+
+WikiLinkHolder should not know anything about images.
+
+InlineImages should be supported by a macro (not by a bracketed link).
+
+{img:text|url or link rep/}
+e.g. {img:text file|^abc.gif/}
+
+For now, still support the syntax, and same behaviour.
+
+This means that:
+- words have to be treated specially (to accomodate images). if pattern matches an image, pass it to image macro
+- explicit_links are treated, to see if it starts with "[i ", and if so, we delegate to the image macro
+
+InlineImage (model it after IncludePage)
+- 
+- 
+
+(DONE)
+
+===
+
+Threaded messages
+- names can be $longNum[.$longNum]*
+- list all by name
+- keep stack, so that we build a tree, and then write out the tree 
+  in the file
+- allow folks to reply to a comment (so there's a "reply" button after each comment)
+- 
+
+(DO IT LATER)
+
+===
+
+what is the most popular wiki format???
+- look at moinmoin, twiki, radeox, mediawiki
+(don't change the text formatting rules)
+(DO NOT CHANGE/FIX)
+
+===
+
+
+[bcd]
+[a |bcd]
+[http://abc]
+[a b |http://abc]
+
+{link:bcd /}
+{link:a |bcd /}
+{link:http://abc /}
+{link:a b |http://abc /}
+
+[i a|b.gif]
+{img:a|b.gif/}
+
+The key:
+- for macros, do not pass the { and /}. Instead, just pass the macroName, and macroParamString.
+
+(DO NOT CHANGE/FIX)
+
+===
+
+Support relative links
+- if non-explicit link, do as usual
+- if explicit link, then
+  - have a flag which says if absolute
+  - (based on the attribute, all explicit links are either absolute or relative)
+  - (if relative, leverage the context page)
+
+To get wiki page
+  - if true.equals(wce.getProperty(use_context_page_to_resolve_links))
+    - if pagerep starts with /
+        return pagerep (without the /)
+      else
+        if contextpage == null 
+          return pagerep 
+        else
+          return contextpage + / + pagerep
+  - else
+    return pagerep (without the / front and back)
+
+This is not fully baked, so don't publicise it.
+
+(NOT FULLY DONE)
+
+===
+
+Remove dependency on radeox.
+
+Instead, support our simple way of writing macros.
+
+Then allow us to interprete radeox macros as is.
+
+(DONE)
+
+===
+
+Put all templatefiles in a single directory (templatefiles)
+(DONE)
+
+===
+
+Allow a way to see all attachments in the wiki.
+Do this from pageindex.
+(DONE)
+
+===
+
+Add scripting support, via BSF and beanshell (bundled)
+(DONE)
+
+===
+toc macro
+
+we keep a counter of headers
+- each time we see one, the anchor name is (oxywiki-h$ctr).hashcode()
+
+toc macro
+- takes the wiki page, gets the full text, and then parses it, extracting all the headers
+- keep a LinkedHashMap of headerLevel to headerString
+- then, it knows how to display
+  - it prints - (the number of times that the header is), and then the header string
+(done)
+
+===
+
+in parser .jj file, we should not write things out ourselves.
+
+Instead, all methods in WikiParser2.jj should start with p_jj_
+and all methods in WikiParser2Handler should not
+
+(this will allow anyone take advantage of the overloading ability)
+(done)
+
+===
+also, wikiparser2.jj should not directly call write|writeln
+- it should call methods in WikiParser2Handler
+
+(DO NOT DO)
+
+====
+
+Remove oxywiki-sandbox.properties, oxywiki-help.properties, oxywiki-builtin.properties 
+from the CVS tree.
+
+cvs remove all .tortoise.removed files
+(done)
+
+====
+
+Figure out how to use the jar file, if the actual file does not exist, and the 
+category name is help.
+(done)
+
+====
+
+To pass around the WikiWebContext,
+- store it as a ThreadLocal variable in WikiUtils
+- WikiUtils.getWikiWebContext()
+- WikiUtils.setWikiWebContext(WikiWebContext webctx)
+
+- now, all webapps running will call this to do stuff
+- instead of trying to get it from the Request ...
+(done)
+
+====
+
+WikiLinkHolder:
+- the following member variables should not be on it
+  private transient WikiWebContext wikiwebctx;
+  private transient WikiI18n wi18n;
+(done)
+
+====
+
+Use JSF to re-write wiki
+(Do Not Do ... does not buy anything, and it makes it harder 
+ to do some things e.g. SEF URL's, security based on paths when used in servlet, templates, etc)
+
+====
+
+Some refs are broken
+- some existing pages are thot to be non-existent
+- some orphaned pages only say that it knows about itself
+  e.g. diablo/WLS9.0.1/RelNotes
+
+====
+
+Look at WikiUtils and WikiViewUtils, especially the sides that
+play with WikiLinkHolder and call sets/gets on it.
+(done)
+
+====
+
+WLH
+- remove reference to WikiCategoryEngine
+
+let WikiLocal hold a ref to WikiEngine
+- then, get/set WikiCategoryEngine on WLH goes away
+- functions called getWikiEngine go away ...
+(done)
+====
+
+WikiRenderContext
+- do not store strings
+- only store booleans ...
+
+remove from existence: WikiConstants.SERVLET_REQ_REALPAGEVIEW_KEY
+(done)
+
+====
+
+look at things which work off a timer
+(done)
+
+====
+
+make link a macro
+- if no macro found, pass the macro to the default macro (which is link)
+- cancel the current image syntax
+
+This will allow: [...] === {.../}
+
+Macro is handled by:
+- if a macro key, pass to the macro
+- else pass to the link macro
+
+To do this:
+- have to take it away from WikiParser2Handler.java
+  - move do_word to WordMacro
+  - move do_link to LinkMacro
+  
+(do not do)
+
+====
+
+- plug in smilies
+ - smileys are identified by  :XXX 
+ - pass to smiley, which replaces it with an image.
+- there's a smiley file on disk, which maps the smiley replacements
+ - for each file, read each line, split on first = , so just load up as properties
+- use the ones from phpbb for now.
+  - use long-text way of defining them
+  - also, support some few shortcuts (only :) and :( )
+(done)
+
+====
+
+Figure out a way to make wiki parser security conscious
+- way to say that, no matter what, do not permit html tags ...
+  - ie always escape <,
+    - check for AS_IS, etc.
+      - have ability to say if AS_IS is supported, as thatz how most folks plug in html code
+      - have ability to say if html tags in PI is supported, as folks can use it to say that escapehtml = false
+  - only support well behaved macros (all builtin ones should be good, and not allow arbitrary html)
+
+(This is the reason why phpBB and vBulletin support their bbcode et al)
+(done)
+
+====
+
+Whenever a user cannot see something, plug this is
+<pre>CONTENT_UNAVAILABLE</pre>
+
+do this for
+- scripts not allowed 
+- macro unavailable 
+- AS_IS not supported 
+
+There is a property on the init.properties
+  net.ugorji.oxygen.wiki.content.unavailable = <pre>CONTENT_UNAVAILABLE</pre>
+
+WikiConstants.CONTENT_UNAVAILABLE_KEY
+
+Let this replace 
+- #!UNKNOWN_MACRO__PageCount__!#
+- #!NOT_ALLOWED_TO_EXECUTE_SCRIPT!#
+
+Update help/FAQ/PAGE.TXT to reflect this
+
+To do this:
+- store in rendercontext, whether as is is supported: AS_IS_KEY
+- do in WikiUtils.newRenderContext
+(done)
+
+====
+
+Each section should be able to define its own default user
+(Note: A username does not change just because a different language is in use ... )
+(done)
+
+====
+
+Keep a list of internal reserved category names in the WikiEngine.
+Then sections.jsp and admin.jsp should not show those (so folks can't remove them, etc etc etc)
+(DO NOT DO)
+
+==== 
+
+Support replacement of censored words.
+(done)
+
+====
+
+make parser seperatable from the whole wiki engine.
+
+That way, we can use it individually from the wiki.
+- just bundle oxywiki-parser.jar
+  - parser can take an encapsulation of a WCE called WikiParserContext
+    - all the methods of WCE are exposed here
+    - this way, the dependency is zero.
+  - the dependency on 
+
+We'd have
+  These are standalone, and do not need the whole wiki infrastructure
+  - net.ugorji.oxygen.wiki.render
+  - net.ugorji.oxygen.wiki.parser
+  - net.ugorji.oxygen.wiki.common
+
+  Everything else is part of the core wiki infrastructure
+  - oxywiki-parser.jar
+  - oxywiki-common.jar
+    
+Note: the macros are tied to the wiki, so are not seperatable.
+
+WikiParser2Handler
+- we can remove dependency on WikiLocal and WikiI18n by just putting 
+  the general.content_unavailable value in the render context
+- XXX WikiProvidedObject by passing the pagerep in the render context
+- remove dependency on WikiWebServletContext by having a way to get pure URL from a WLH
+- RadeoxHelper is fine.
+- 
+
+This is doable
+- Make WikiRenderContext an interface
+- It should have the methods that we need from WikiCategoryEngine
+- some refactoring will put some classes in 
+  net.ugorji.oxygen.wiki.render package
+  e.g. net.ugorji.oxygen.wiki.*Render*
+- some refactoring will put some classes in 
+  net.ugorji.oxygen.wiki.common package
+  e.g. .WikiMacroParameters
+- eventually, we will move all these to a different product
+  ie net.ugorji.oxygen markup
+  - we should do it now ...
+  - it will have
+    RenderConstants (some things in WikiConstants - make this an interface)
+    net.ugorji.oxygen.markup.
+    net.ugorji.oxygen.markup.parser.
+    
+- macros will remain with wiki.
+- some macros will 
+
+- MarkupRenderContext
+  - getMacro(command)
+  - getRenderEngine()
+  - getEmoticonLink(String s)
+  - isCensoredWord(s)
+  - getCensoredWordReplacement(s)
+  - isReferenced(s)
+  - isDoAttachment(WikiLinkHolder)
+  - getExternalImageSrc()
+  - getContentUnavailableString()
+  - getPageRepresentationString()
+  - i18n(String key)
+
+MarkupConstants
+  - some of the values in WikiConstants
+  - it will become an interface
+  - WikiConstants will extend it. (so that it can see some of its variables)
+MarkupMacro
+  - WikiMacro will go away
+MarkupMacroParameters
+  -   WikiMacroParameters will go away
+WikiRenderEngine.java
+  - WikiRenderEngine.java will go away
+MarkupUtils
+  - will have he methods that it needed from WikiUtils
+    e.g. those patterns, etc
+  - WikiUtils will extend MarkupUtils (to also give the visibility thingie)
+
+Also, make WikiParser2 an abstract class, so that the following are abstract and can be overriden
+(these require knowledge of WikiLinkHolder)
+  - void do_link(...)
+  - void do_word(...)
+  - 
+  actually, don't make it abstract ... 
+- also, move RadeoxHelper into markup package
+
+(done)
+=============================
+
+wiki integration
+-----------------
+=============================
+- pass an instance of MarkupRenderContext
+- define WikiParser2 as a class, which will now extend MarkupParser.
+  - implement the abstract methods
+(done)
+
+=============================
+- also, ensure U set the RenderEngine on the WikiParser2 (new method introduced)
+(done)
+
+=============================
+Also, pagerep is not used ... so have a way to pass that in, within the wiki
+we removed it from the markup base
+(done)
+
+=============================
+When WCE is re-using markup's EmoticonsManager, ensure to include this:
+    WikiWebContext wikiwebctx = (WikiWebContext)WikiLocal.get(WikiWebContext.class);
+    if(wikiwebctx != null) {
+      s = wikiwebctx.encodeURL(s);
+    }
+(done)
+
+=============================
+Ensure that no Macro depends on the prepare(WikiCategoryEngine wce) callback.
+(done)
+
+=============================
+Work on WikiParser2.java ... and fix it. 
+- it should call into RenderContext, and not need wce
+(do not do)
+=============================
+
+- seperate create from edit
+- when creating new page, first show UI to select a template to start with
+- template is now a supported parameter.
+(do later)
+
+=============================
+
+cancel WikiUtils.newRenderContext
+- just make it a constructor of WikiRenderContext
+(done)
+
+=============================
+
+look for who calls WikiUtils and WikiConstants
+- do not extend those classes anymore
+(do not do. it's fine ... the dependency on these methods extends all over the place)
+
+=============================
+WikiTest does not pass in a RenderContext
+- fix it.
+(done)
+
+=============================
+- Ensure that a non-null instance of MarkupRenderContext is always passed to MarkupParserBase
+  for the wiki. we don't check anymore
+  - overwrite link(...) and word(...)
+  - let them delegate to do_link and do_word
+  - implement do_link(...), do_word(...) as before
+  - all your folks who override WikiParser2 will call do_word/do_link
+(done)
+
+==============================
+
+check if jar's work fine.
+- create a jar file for builtin, which just has its Main/PAGE.TXT page.
+- check it in
+
+====
+Put the method to extract properties from a resource in MarkupUtils
+- extractPropertiesFromResources(String resource, String prefix, boolean removePrefix, boolean findAllResources)
+  if prefix is null, do not check for prefix
+  if prefix is not null, and removePrefix = true, after matching, remove the prefix
+  if findAllResources, use getResources (and not getResource)
+(done)
+  
+====
+
+emoticons properties are prefixed with
+- net.ugorji.oxygen.wiki.emoticon.
+censored words are prefixed with
+- net.ugorji.oxygen.wiki.censored.
+
+Let EmoticonsManager and CensoredWordsManager both take a Properties object
+to initialize.
+
+Both classes will handle
+- extracting their properties
+
+Put the initial set of censored words and emoticons in init.properties
+
+remove the files in src/META-INF/oxywiki-*.properties
+
+remove the lines in constants, that refer to locations of emoticons props and censored words props
+
+(done)
+
+====
+Update the docs Edit/PAGE.TXT, Configuration/PAGE.TXT
+
+Talk about Radeox Plugins in Macros/PAGE.TXT (and how to configure them).
+(done)
+====
+
+
+Use Redirect-After-Post pattern. 
+Figure out how to include it into the action flow.
+- maybe, 
+  - have WikiWebContext do a lightweight render
+  - for Servlet, it should render to a link, which just spits out the contents of something
+  - for portlet, it is a no-op ... the portlet will handle things ...
+Also, set no-cache.
+
+response.setHeader("Pragma", "No-cache");
+response.setHeader("Cache-Control", "no-cache");
+response.setDateHeader("Expires", 1);
+
+To do this,
+- let Actions return an int, which can have flags
+  - WikiWebAction.*
+  -              .REDIRECT_AFTER_POST
+
+WikiPortlet does not care about this
+  - since portlets should handle this themselves
+WikiServlet does, by redirecting to $contextpath + /z (special reserved string)
+  - if the path info is something which we configure, then we know that
+    - we should just call a render on the current contents of the wikilinkholder
+      WikiPortlet should be able to talk to WikiWebappListener (same with WikiServlet)
+      WikiUtils has an ensureWikiLinkHolder(...) function
+
+(done)
+
+===
+
+Guidelines:
+- Actions should never set things into the request-attributes (e.g. actions should 
+  never set WLH in request.setAttributes - or call WikiUtils.setWikiLinkHolder
+
+Let all actions implement processAction
+
+those that want to do an includeView, will have
+- processAction mangles the request, and puts the model for the view, in the WLH attributes map
+- render will render according to that map
+- includeView will call
+  - processAction(...)
+  - WikiUtils.includeView
+- render will call
+  - WikiUtils.showView
+
+The list is:
+net.ugorji.oxygen/wiki/actions/
+./AttachmentInfoAction.java (done)
+./AttachmentsAction.java (already has a good model ...)
+./DiffAction.java (done)
+./EditableAction.java (already has a good model ...)
+./EditAction.java (do not do ... let includeView throw Unsupported...)
+./LoginAction.java (no work to do)
+./PageIndexAction.java (done)
+./PageInfoAction.java (done)
+./RecentChangesAction.java (done)
+./RefsAction.java (no work to do ... for now)
+./SearchAction.java (do not do ... let includeView throw Unsupported...)
+./SectionsAction.java (no work to do ... for now)
+./SysInfoAction.java (no work to do ... for now)
+./WikiCalendarAction.java (done)
+
+Some .jsp files will have to be retrofitted to manage this
+- all jsp files should just work based on a Map in the WLH attributes ...
+
+Also, look at the following jsp files, and fix their actions.
+./attachments.jsp (nothing to do)
+./calendarview.jsp (done)
+./cmdline.jsp (done)
+edit (done)
+editconfig (done)
+locks (done)
+misc (done)
+pagedeleted
+reviews (done)
+userprefs (done)
+
+(done)
+
+===
+
+Also, get away from using SEND_TO_WIKIWEBCONTROLLER_KEY
+
+Test out admin, and all the other things.
+- edit, review, editconfig
+
+Work on EditAction, and EditableAction
+
+Editable
+  processAction
+    - takes the req params and stores in the attributes
+    - keeps a model in the attributes also
+    - checks if dopostedit
+      - if so, calls handlePostEditable
+        - does one of cancel, save, preview, usetemplate, reedit ... 
+          - only redirect when save|cancel is clicked
+      - else call handleEditableInit (store model on wlh)    
+  render
+     (the model and co are already here)
+     WikiUtils.showJSPView
+
+(done)
+
+====
+also, look to cancel the use of getExtraparam ...
+- instead, store the Map for extraparam, in the attributes, under key WLH.REQUEST_PARAMETERS
+
+(it seems we will be needing it, because we may need to construct some URL's just from the WLH)
+
+===
+Look at all the places that return REDIRECT_AFTER_POST
+ensure they only do it if doPostAction was done (ie if the form was submitted)
+
+(done)
+===
+
+Instead of a bunch of macros to do things which just call includeView,
+just have one macro - called includeactionview
+
+{includeview:recentchanges/}
+
+- remove all the classes extending AbstractIncludeJSPView
+- implement a IncludeActionViewMacro
+  - which takes AbstractIncludeJSPView + AttachmentsAction, and 
+    adds a catch(UnsupportedOperationAction)
+
+- update init.properties
+- update the Macros help page, to reflect this.
+- update all help/sandbox pages to reflect this
+(done)
+
+====
+
+On sysinfo page, we're seeing /UNKNOWN_URL_PREFIX
+
+(fix it, by allowing the WCE to be passed in the lh attributes)
+
+(done)
+
+====
+
+by default, on search
+- if no search params are entered, return no results
+(done)
+
+====
+
+Note:
+- the template is seeing too many parameters, which should only be seen on the 
+- we need to skip some special parameters
+  e.g. 
+- or we just need to only acknowledge some special parameters ...
+  e.g. show, hide, ver
+OR
+- before we redirect, we clear it
+
+====
+
+Remove LoggingManager, etc
+- Just have WikiPostStartupPlugin
+  - call 
+
+Let Wiki use like forum
+- leverage the same WebInteractionContext
+- let WLH extend ViewContext
+- let TemHdlr be the one we expect (just a jsp template handler)
+  - stored in the weblocal also
+
+Regarding includePage
+- some actions never include page (e.g. sections, etc)
+- some actions should always include page (e.g. view, edit, etc)
+- store actions which should not include page
+
+
+Refactoring wiki
+- WikiTemplateHandler should go - just use TemplateHandler
+- WikiEngine.getWikiEngine() ... like how it is done for forum
+  - it looks at a file on disk for the overrides, and finds init.properties from the classpath
+- WikiWebAction should go ... just use Oxygen's WebAction
+- WikiLH should extend ViewContext
+  - Use a TemplateContext, to store stuff
+  - put the map et al that jsp's use, in the template context
+- WCE et al should not be stored in the templatecontext
+  - just get it from the WikiLocal
+- WikiLocal should have all full methods (e.g. getWikiCategoryEngine, etc)
+  - no more arbitrary sets/gets
+  - in fact, do not use OxyLocal at all ...
+
+
+(where thdlr.showView(... ) is called, use the templatecontext, to store stuff there
+  - templatecontext: store that borders should not be shown
+  - insertion. just say the file that should be inserted.
+
+All WikiInsertion does is to 
+- include a specific file
+- do away with wiki insertion
+  - in the templatecontext, store the jsp page to be included (done by the action)
+  - if doing a wce.writeHTML
+    - put that in a jsp page
+    - store the wikipage (already stored by someone in the WikiLocal)
+
+WikiWebAction.includeView
+- instead, call GenericWikiWebAction.includeView 
+- cast to GenericWikiWebAction
+
+############################ 
+- showBorders, realpageview are both stored in the template context
+  
+removals
+========
+WikiWebContext ==> WebInteractionContext
+WikiTemplateHandler ==> TemplateHandler
+WikiInsertion ==> no replacement
+WikiI18n ==> I18n and I18nManager
+WikiWebappListener
+WikiWebAction
+EngineController ==>
+
+(for all removed files, change name to end with .remove)
+
+Ensure that the template handles the values of 
+  TEMPLATE_SHOWBORDERS_KEY  (this should be on the template context)
+  TEMPLATE_REALPAGEVIEW_KEY (this should be on the view context)
+
+Remove req.setAttribute(WikiConstants.SERVLET_REQ_ATTR_INSERTION, r);
+    (it's used in the view.jsp file)
+
+Edit help page is not showing.
+
+
+==================
+
+remove wikiruntimemanager, and the implementations of it
+- put a p4 impl for it
+- put an impl of that for P4
+
+- also, add a Properties to go with the save (so you can store save information).
+
+- also, no-one should take a parameter called WikiEngine anymore 
+
+(look for files with public and WikiEngine in them)
+
+==================
+
+Bugs:
+- (fixed) preview shows nothing
+- (fixed) save (when there are errors) does not show the error, and does not allow you save either.
+- (fixed) test that acquiring locks works, and that if U cannot get lock, U see the "locknotacquired"
+- (fixed) WE, WCE, etc should not be stored in models for writing (or should not be stored in stuff put into the WLH, VC, TC, etc)
+- (fixed) put an error page, and let it always be in effect (via configuring it in the template.jsp, and the error pages of the webapp)
+- (fixed) handle if a non-recognized string is put for net.ugorji.oxygen.wiki.edit.lock.type
+
+
+- (fixed) wiki provided object should be serializable
+- (wnf - nothing to do) if timer expires on edit, clean up the timer object (else firefox/IE can hang)
+- anything put in WLH, or directly in session, should be serializable
+- (wnf - nothing to do) anything put directly in session, should be serializable
+  - ie anything put in the wlh model, should be serializable (esp the wcalhelper)
+
+(fixed) Error page
+- there is an action called error
+- there is a link to the page, for when there is an error
+
+=================
+
+Locale:
+- WebInterCtx when making a ViewContext, should set the locale in there
+- everyone else should get locale from there ...
+=================
+
+
+" retire {{{{ }}}} as AS-IS - just support (( )) or `` `` "
+" make this to be quote ie blockquote: ``` ``` "
+
+====================
+
+quote:
+``the man is here ``
+
+(that is quoted ... not AS-IS)
+
+" retire {{{{ }}}} as AS-IS - just support (( )) or `` `` "
+" make this to be quote ie blockquote: ``` ``` "
+
+No-one should use WIKI_WEB_CONTEXT_KEY, CATEGORYENGINE_KEY
+- ensure it's not used anywhere ... it's not needed.
+
+if("true".equals(engine.getProperty(MarkupConstants.HTML_TAGS_SUPPORTED_KEY)))
+==> boolean isHTMLTagsSupported() for wiki
+
+update macros help page
+
+put a css stylesheet for quote (already done)
+
+
+
+====================
+
+make the parsing of links a part of the markup engine
+- [ a b | a/b ]
+- [ a b | a/b | yes ]
+
+MarkupLink(String s)
+- image
+- urlpart
+- text
+- text2
+- explicitLink
+
+link(MarkupLink, doPrint)
+word(String, isSlashSeperated,
+====================
+
+Markup
+- should handle ShorthandManager
+  - ShorthandManager(Properties p, String replaceKey) implements Closeable 
+    Properties getAll()
+    boolean hasKey(String name)
+    getEvaluatedString(String name, String replacestr)
+
+MarkupRenderContext will now include:
+  - isShorthandKey(String s)
+  - getShorthandReplacement(String s)
+
+link(...) will handle these.
+
+====================
+
+try to remove this:
+- WikiConstants extending MarkupConstants
+- WikiUtils extending MarkupUtils
+
+====================
+
+- where getEvaluatedString is called, conditionally call encodeURL from the WebInteractionContext
+
+wiki2
+./src/net.ugorji.oxygen/wiki/WikiLinkHolder.java:          evaluatedExtLink = wce.getShorthandManager().getEvaluatedString(protocol, linkstr);
+./src/net.ugorji.oxygen/wiki/macros/ExternalWikiLink.java:      String url = engine.getShorthandManager().getEvaluatedString(name, page);
+markup
+./src/net.ugorji.oxygen/markup/DefaultMarkupRenderContext.java:    return shorthandMgr.getEvaluatedString(s, replacestr);
+
+====
+
+preview == use ajax
+- remove preview functionality from the Editable Action
+- remove Use Template functionality from the Editable Action
+
+remove preview functionality from the 
+
+=====
+
+No more "post... " type actions
+- AttachmentsAction.java
+- CmdLineAction.java
+- EditAction.java
+- EditConfigAction.java
+- UserPrefsAction.java
+
+AttachmentsPostAction
+CmdLinePostAction
+UserPrefsPostAction
+EditPostAction
+EditConfigPostAction
+
+ReviewPostAction
+ReviewAction
+
+EditAction
+EditPostAction
+
+====
+
+viewable actions
+
+=====
+
+useTemplate
+- use Ajax for it ...
+
+save will not do the whole editerror thing
+- encourage users to preview first
+- if not, when they save, it may bomb out
+
+somehow, the page is null???
+
+======
+
+- do not use jscookmenu in here, and do not bundle it
+- 
+
+======
+
+jcaptcha.enabled = true | false
+
+Jcaptcha
+- include it
+
+Wiki
+- edit.jsp, EditPostAction
+- review.jsp, ReviewPostAction
+- WikiUtils.isCaptchaEnabled()
+
+Forum
+- postform.html, PostAction
+
+
+=========
+
+Bugs:
+- review is not supported at this time
+- 
+
+show/hide is very broken.
+
+implement an advanced search, and a non-advanced search.
+2 forms.
+with link at top to say
+- Simple Search | Advanced Search
+
+search.jsp (the form)
+searchresults.jsp (just the results)
+
+in search.jsp, use div's and visibility/display to have 2 div's, 1 for simple search, and 1 for advanced search.
+When one link is clicked, one of the div's is visible or not.
+
+if simple search, then do an OR
+
+we know it's simple search, if
+- the parameter WikiConstants.SEARCH_INDEX_SIMPLE_SEARCH_KEY is given
+- if so, we do an OR, and use the value for all key stuff (comments, contents, Page Name)
+
+else do an AND.
+
+Thus, let WikiIndexingManager.search take an int parameter OR, AND
+
+Put a minimum search score, below which, we don't even show a result.
+- by default, it's 0.09
+
+==================
+
+P4 should be careful, not to show things which are like import et al
+- try to parse the output correctly.
+
+Test:
+- delete page is broken
+- turn off jcaptcha and test it. By default, jcaptcha should be disabled.
+  - add it to the help
+
+==================
+
+Using Berkeley DB for pages
+- each page is a database on its own
+  Main/
+    PAGE.TXT
+    Attachment1.doc
+    .OXYWIKI.db
+
+- Use a berkeley db and a cursor to do things
+  - to delete, 
+PAGE.TXT.1
+
+# 
+- Just write a helper, and configure it
+- FileSystem providers, will just use the helper to do everything ... 
+
+  FSHelper
+  init(Properties p, WikiCacheManager cm)
+  ...
+
+  So Default*java files will do everything
+  - we will move the p4 helper files to filesystem directory
+  - we will move the berkeley db files to filesystem directory
+  - we will change the names of all the files to FS* (instead of DefaultFileSystem*)
+  - we will have the SimpleFSHelper, BerkeleyDbFSHelper, PerforceFSHelper, etc
+
+metadata
+
+===========================
+
+ensure built zip does not contain the override files ... or has them empty ...
+(done)
+
+===========================
+
+Tell folks to ensure they put
+{pi:singlepage=false| /} at the top of their Left, Right, Center pages
+  - so that TOC will not be shown, and toc anchors will not mess up.
+  - add this to the FAQ
+  - add it to the 
+
+================
+
+The following parameters are reserved
+* page
+* ver
+* category
+* attachment
+* action
+
+The Top Level Servlet and Portlet use them to figure out where to go.
+DO not use these as private parameters for any of your actions.
+

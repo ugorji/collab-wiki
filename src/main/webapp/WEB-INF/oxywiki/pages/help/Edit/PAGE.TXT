@@ -1,0 +1,531 @@
+{pi:camelcase=false|freelink=true /}
+
+{toc/}
+
+= Text Formatting Rules 
+
+== Basic Text Formatting Rules 
+Leave blank lines between paragraphs. 
+
+You can render text in ''italics'' or '''bold''' or __underlined__ .
+ * To write italics
+   * enclose the text in ``\\`` or ``~~``.
+ * To write bold
+   * enclose the text in ``'''`` OR ``**``
+ * To underline text
+   * enclose the text in ``__`` 
+ * To have superscripted text
+   * enclose in ``^^`` 
+ * To have subscripted text
+   * enclose in ``,,``
+ * To have monospaced text
+   * enclose in ``{{ }}``
+ * To write in strikethrough
+   * enclose in ``---``
+ * Use 2 backslashes ``\\`` to denote a linebreak.
+ * Use 2 blank lines to denote a paragraph.
+
+Extended ones
+ * To quote stuff, especially useful for inline reviewing
+   * use `` """ quoted block """ ``
+ * To put stuff in pre-formatted tag ``(< pre />)``, 
+   * use ``{{{ pre text }}}``
+ * To have stuff come out exactly AS IS,
+   * wrap in ((``)) OR `` (( )) ``
+ * For things which have to fit in one line, you can spread it over multiple lines \
+   by ending the line with a ``\`` (this treats the next line as a continuation of the previous line. \
+   This really comes in handy for tables and lists (which you should fit a row or otherwise on 1 line.
+
+=== Example 
+{{{
+__Mixing__ ''italics'' and '''bold''':
+ * '' '''Mix''' at the beginning''
+ * ''' ''Mix'' at the beginning'''
+ * '''Mix at the ''end'' '''
+ * ''Mix at the '''end''' ''
+ * ~~Mix at the **end** ~~
+Others:
+ * __ underlined text __
+ * You might recall ''a''^^2^^ + ''b''^^2^^ = ''c''^^2^^ from your math lessons,
+   * unless your head is filled with H,,2,,O.
+ * A {{monospaced text sequence}} has the start and end markers as so. 
+ * Ugorji \\ was \\ here
+ * --- Ugorji is not really cool ---
+ * `` Ha Ha Ha <b>thanks</b><sup>n</sup> any html can go here ``
+Extended:
+ * See this multi line continuation. I can span \
+   it over many lines \
+   like this.
+ * A second list item is here
+
+A quote is below (Note that anything can be put inside it).
+"""
+Hi there. I think this page is getting too long.\\
+If you click ''Show/Review comments'' at the bottom, this will get hidden or shown.\\ 
+Maybe split it up into different areas. '''You heard me'''
+
+-|| Bogus -|| blah
+ || thanks || yes
+
+"""
+
+Java processed text (from a code macro)
+{code:java}
+ 
+package net.ugorji.oxygen.wiki;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public interface WikiWebAction {
+  void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception;
+}
+{/code}
+}}} 
+
+=== Display 
+
+__ Mixing __ ''italics'' and '''bold''':
+ * '' '''Mix''' at the beginning''
+ * ''' ''Mix'' at the beginning'''
+ * '''Mix at the ''end'' '''
+ * ''Mix at the '''end''' ''
+ * ~~Mix at the **end** ~~
+Others:
+ * __ underlined text __
+ * You might recall ''a''^^2^^ + ''b''^^2^^ = ''c''^^2^^ from your math lessons,
+   * unless your head is filled with H,,2,,O.
+ * A {{monospaced text sequence}} has the start and end markers as so. 
+ * Ugorji \\ was \\ here
+ * --- Ugorji is not really cool ---
+ * `` Ha Ha Ha <b>thanks</b><sup>n</sup> any html can go here ``
+
+A quote is below (Note that anything can be put inside it).
+"""
+Hi there. I think this page is getting too long.\\
+If you click ''Show/Review comments'' at the bottom, this will get hidden or shown.\\ 
+Maybe split it up into different areas. '''You heard me'''
+
+-|| Bogus -|| blah
+ || thanks || yes
+
+"""
+
+Java processed text (from a code macro)
+{code:java}
+package net.ugorji.oxygen.wiki;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public interface WikiWebAction {
+  void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception;
+}
+{/code}
+
+= Linking 
+
+== Free Links 
+If you have enabled free links, and a ''word'' in your page matches an existing page, then it is made a link.
+
+If you do not want a word to be treated as a free link, prefix it with a `` ` ``
+
+== Slash Separated As Link 
+If you have enabled ''slash separated word is link'', then any slash separated word is treated as a link.
+
+If you do not want a slash separated word to be treated as a link, prefix it with a `` ` ``. e.g. `Main/Classes `Beginners/Tryme
+
+== Camel Case As Link 
+If you have enabled ''camel case word is link'', then any Camel case word is treated as a link.
+
+A camel case word is formed by taking a word, capitalizing the first letter, and joining a bunch of them together.
+
+However, each word in a camel-case must have more than 1 character (eliminating acronyms, etc).
+
+The following are camel case words:
+ * ``AnotherWikiImplementation``
+ * ``UgorjiIsAMan``
+
+However, the following are '''not''' camel case words:
+ * ``AManIsHere``
+ * ``URL``
+
+If you do not want a camel case word to be treated as a link, prefix it with a `` ` ``. e.g. `AnotherWikiImplementation `UgorjiIsAMan
+
+== URLs 
+
+A URL is sequence of characters which contains a colon in it e.g. ``http://myhost/a``
+
+There are several way to insert external references into the text:
+ * direct URL insertion (if a colon is contained in a link, it is made a URL)
+   * this will work well for protocols like `` http: https: ftp: telnet: ``
+ * bracketed URLs.
+ * email addresses.
+
+A URL (string with a colon) is translated as below
+ * We get the protocol (string before the colon)
+   * If protocol = a section name, then the link maps to a section link
+   * If protocol = an external wiki name, then the link is translated to the ext wiki link
+   * Else we just show the URL as is
+
+If you enter URLs into normal text, there is the problem of detecting what belongs to the URL and what not. There are 2 ways to force the ending of an URL:
+ * put a space after the URL.
+ * use the bracketed URL syntax.
+
+=== External Wiki (Alias) Links
+
+External Wiki (Alias) Links are like shorthand for making links. It is of the form
+`` $aliasname:$replacement ``.
+
+Here, the external wiki's are configured in the oxywiki.properties, or the 
+corresponding oxywiki-$section.properties.
+
+The currently builtin ones are myserver, wiki, jspwiki, mailto.
+
+Also, all the actions have aliases. They all start with ~~ action. ~~ For example,
+action.edit, action.sysinfo, etc.
+
+For more on configuration, look at the bottom of the page.
+
+== Bracketed links 
+
+If you enclose a sequence of characters in square brackets  `` [like this] ``, that makes it a page name. 
+
+The syntax is something like
+{{{ 
+  [$displayText | $linkRepresentation ] 
+}}}
+
+ * If there is no |, then the display text is the same as the linkRepresentation.
+ * If the link representation contains a :, then treat it as a URL (translated as described above)
+ * If the link representation matches an email address, then treat as a `` mailto: `` link
+ * Else treat as a Wiki link
+
+The Wiki links are interpreted as below:
+''When the link starts with a number of /'s, it is treated differently''
+ * If start with /
+   * This is within this section
+     * so strip out the /
+   * e.g. /c/d ==> page = c/d
+ * If start with (No beginning slash)
+   * This is within this section (just like with 1 slash)
+ 
+If the wiki page contains spaces, join the words together, capitalizing the first character of each word, and use that as the wiki page.
+
+To reference an attachment or anchors, use the form below. Note that, for attachments or anchors, we can leverage the current page.
+ * c/d^myfile.zip ==> page = c/d, attachment = myfile.zip
+ * c/d#mymiddlepoint ==> page = c/d, anchor = mymiddlepoint
+ * ^myfile.zip ==> page = CURRENT_PAGE, attachment = myfile.zip
+ * #mymiddlepoint ==> page = CURRENT_PAGE, anchor = mymiddlepoint 
+   
+== Images
+
+An image is identified by 
+* A freelink (without ``[ ] ``) which ends with `` .jpg, or .png, or .gif, or .jpeg, or .bmp ``
+* An explicit link (enclosed within ``[i  ] ``)
+
+If you put a link to an image directly (without the `` [ ] `` )), then that image is inserted inline into the page.
+
+If however, you put the `` [ ] ``, then that image link is just shown.
+
+However, sometimes, you want to show an explicit link inline (e.g. for attachments, etc). To do this, use the format like so:
+{{{ Examples: 
+* [i __alt_text__ | ^myattachedimage.gif ] 
+* [i __alt_text__ | http://myname.com/myimage.gif ] 
+* [i __alt_text__ | http://myname.com/myimage.gif | align=right width=200 ] 
+}}}
+
+=== Example for links below
+{{{
+ * http://www.UGORJI_COMPANY.com/
+ * [http://www.UGORJI_COMPANY.com/]
+ * [Naigee Group Homepage | http://www.UGORJI_COMPANY.com/ ]
+ * http://www.UGORJI_COMPANY.com/images/non-existent-logo.gif
+ * [http://www.UGORJI_COMPANY.com/images/non-existent-logo.gif]
+ * http://www.UGORJI_COMPANY.com/images/logo.gif
+ * [i http://www.UGORJI_COMPANY.com/images/logo.gif ]
+ * [i http://www.UGORJI_COMPANY.com/images/logo.gif | http://www.UGORJI_COMPANY.com/images/logo.gif | align=right width=200 ]
+ * [http://www.UGORJI_COMPANY.com/images/logo.gif]
+ * [ images/logo.gif | http://www.UGORJI_COMPANY.com/images/logo.gif ]
+ * ugorjinwoke@UGORJI_COMPANY.com
+ * [help page | help:Main]
+ * help:Main
+ * jspwiki:News
+}}} 
+
+=== Display 
+
+ * http://www.UGORJI_COMPANY.com/
+ * [http://www.UGORJI_COMPANY.com/]
+ * [Naigee Group Homepage | http://www.UGORJI_COMPANY.com/ ]
+ * http://www.UGORJI_COMPANY.com/images/non-existent-logo.gif
+ * [http://www.UGORJI_COMPANY.com/images/non-existent-logo.gif]
+ * http://www.UGORJI_COMPANY.com/images/logo.gif
+ * [i http://www.UGORJI_COMPANY.com/images/logo.gif ]
+ * [i http://www.UGORJI_COMPANY.com/images/logo.gif | http://www.UGORJI_COMPANY.com/images/logo.gif | align=right width=200 ]
+ * [http://www.UGORJI_COMPANY.com/images/logo.gif]
+ * [ images/logo.gif | http://www.UGORJI_COMPANY.com/images/logo.gif ]
+ * ugorjinwoke@UGORJI_COMPANY.com
+ * [help page | help:Main]
+ * help:Main
+ * jspwiki:News
+
+= Headings 
+
+
+== Section Headings 
+You can create headings by starting and ending a line with up to five equal signs. The heading text is between those markers, separated by a single space.
+
+=== Example 
+{{{
+ = Heading 
+
+ == Subheading 
+
+ === Level 3 
+
+ ==== Level 4 
+
+ ===== Level 5 
+}}} 
+
+=== Display 
+
+ = Heading 
+
+ == Subheading 
+
+ === Level 3 
+
+ ==== Level 4 
+
+ ===== Level 5 
+
+
+
+= Horizontal Rule 
+
+You can insert a horizontal rule across the page by typing four dashes. 
+
+=== Example 
+{{{
+--- (not a rule - but can't show this since --- matches strikethrough)
+----
+}}}
+
+=== Display 
+
+----
+
+
+= Lists 
+
+You can create bulleted and numbered lists in a quite natural way. All you do is inserting the line containing the list item. To get bulleted items, start the item with an asterisk ``*``; to get numbered items, start it with a hash ``#``. 
+
+To nest lists of different levels, you use different depths of indenting. All items on the same indent level belong to the same (sub-)list. That also means that you cannot change the style of a list after you started it.
+
+You also create definition lists, by using a ``::`` notation.
+
+~~ The ability to use ``\`` to span a line across multiple lines, really comes in handy for lists, as in the example below ~~
+
+=== Example 
+{{{
+If you put asterisks at the start of the line
+ * you get a 
+ * bulleted
+ * list
+   * which can also be indented
+     * to several levels
+       # numbered list 1
+         # numbered list 2 \
+           Let me span this across many lines \
+           This is cool, eh?
+         # numbered list 2 2
+     * still bulleted
+
+:: Human :: A person who can speak, eat, and so on and so forth \
+            and sometimes, it is really cool to be able to do this.
+:: Woman :: A female human being
+:: Man   :: A male human being
+
+}}} 
+
+=== Display 
+If you put asterisks at the start of the line
+
+ * you get a 
+ * bulleted
+ * list
+   * which can also be indented
+     * to several levels
+       # numbered list 1
+         # numbered list 2 \
+           Let me span this across many lines \
+           This is cool, eh?
+         # numbered list 2 2
+     * still bulleted
+
+:: Human :: A person who can speak, eat, and so on and so forth \
+            and sometimes, it is really cool to be able to do this.
+:: Woman :: A female human being
+:: Man   :: A male human being
+
+
+= Table Markup 
+
+To create a table, you start and end a line using the table marker ``||``. Between those start and end markers, you can create any number of cells by separating them with ``||``. 
+
+To span several columns, you start that cell with multiples of ``||``. 
+
+To define a table header, put a ``-`` at the end of the ``||``.
+
+~~ The ability to use ``\`` to span a line across multiple lines, really comes in handy for tables, as in the example below ~~
+
+=== Example 
+{{{
+||- Title 1 ||||- Header 2 - 2 cols ||- Column 4         
+|| HI there |||| Hi there 2 cols    || hi there 1 column 
+|| hmm      || hmm || hmm           || hmm               
+||- Title 1 ||||- Header 2 - 2 cols ||- Column 4         
+|| HI there |||| Hi there 2 cols    || hi there 1 column 
+|| hmm      || hmm || hmm           || hmm               
+|| hmm2     || hmm || hmm2  \
+                      lemme span \
+                      this over \
+                      many lines    || hmm2               
+|| hmm3     || hmm || hmm 3         || hmm 3              
+}}}
+
+=== Display 
+||- Title 1 ||||- Header 2 - 2 cols ||- Column 4         
+|| HI there |||| Hi there 2 cols    || hi there 1 column 
+|| hmm      || hmm || hmm           || hmm               
+||- Title 1 ||||- Header 2 - 2 cols ||- Column 4         
+|| HI there |||| Hi there 2 cols    || hi there 1 column 
+|| hmm      || hmm || hmm           || hmm               
+|| hmm2     || hmm || hmm2  \
+                      lemme span \
+                      this over \
+                      many lines    || hmm2               
+|| hmm3     || hmm || hmm 3         || hmm 3              
+
+= Comments 
+
+Put 2 hashes ``##`` as the first character on the line. That whole line will be ignored as a comment.
+
+= Html Escaping
+
+By default, all < are changed to &amp;lt; and > is changed to &amp;gt; This allows you get the 
+''what you see is what you get''.
+
+However, this can be disabled, so that you can just have < and > appear in the output as is (without wrapping in AS-IS tags).
+
+= Minor Edits
+
+When doing an edit, you have the option to flag it as a minor edit. This flag is used to control some other behaviour, like
+ * If a minor edit flag is set, no email notifications are sent out to the subscribers
+
+= Emoticons (Smileys)
+
+By default, smileys are supported. The table below shows what the user can enter, and what it is translated to in the text.
+
+Smileys are identified, by having a colon, then a number of characters, then a colon.
+
+-|| Code            -|| Smiley shown
+ || `` :arrow: ``    || :arrow: 
+ || `` :biggrin: ``  || :biggrin:
+ || `` :confused: `` || :confused:
+ || `` :cool: ``     || :cool: 
+ || `` :cry:  ``     || :cry: 
+ || `` :eek: ``      || :eek:
+ || `` :evil: ``     || :evil: 
+ || `` :exclaim: ``  || :exclaim:
+ || `` :frown:  ``   || :frown:  
+ || `` :idea:   ``   || :idea: 
+ || `` :lol:   ``    || :lol:  
+ || `` :mad:   ``    || :mad:
+ || `` :mrgreen: ``  || :mrgreen:
+ || `` :neutral: ``  || :neutral:
+ || `` :question: `` || :question:
+ || `` :razz:     `` || :razz:
+ || `` :redface:  `` || :redface:
+ || `` :rolleyes: `` || :rolleyes:
+ || `` :sad:     ``  || :sad:
+ || `` :smile:    `` || :smile:
+ || `` :surprised:`` || :surprised:
+ || `` :twisted:  `` || :twisted:
+ || `` :wink:     `` || :wink:
+
+= Censored Words
+
+This wiki now supports the replacement of censored words.
+
+If any censored words are in the wiki source, they are replaced when being parsed.
+
+= Setting directives 
+
+Some options help control how the full blown wiki engine displays a page
+ * escape html
+ * support free links
+ * show camel case words as links
+ * show slash separated words as links
+ * whether this is the main page, and/or the single page. Use this at the top of your \
+   Left and Right and Top and Bottom decoration pages, so that name anchors are not \
+   created for them when used in your template. \
+   i.e. at top of Left, put `` {pi:singlepage=false| /} ``
+
+We will show below how to set that across a given section.
+
+However, many times, you may want to set that on a given page.
+
+To do so, add directives at the top of the page. The directives available (self-explanatory) are: 
+-|| Directive       -|| Options
+ || escapehtml       || true or false
+ || freelink         || true or false
+ || camelcase        || true or false
+ || slashseparated   || true or false
+ || singlepage       || true or false
+An example is below:
+{{{
+{pi:singlepage=false| /}
+{pi:escapehtml=false|camelcase=false|slashseparated=true| /}
+
+Hi there
+}}}
+
+This is used, for example, in the Beginners page.
+
+= Configuration 
+
+You configure these by editing your oxywiki.properties, 
+or the corresponding oxywiki-$section.properties.
+
+Sample to configure things which affect the display:
+{{{
+net.ugorji.oxygen.wiki.html.escape                   = true
+net.ugorji.oxygen.wiki.freelink.supported            = true
+net.ugorji.oxygen.wiki.camelcaseword.is.link         = true
+net.ugorji.oxygen.wiki.slashseparated.is.link        = true
+}}}
+
+Sample to configure external wiki links:
+{{{
+net.ugorji.oxygen.wiki.extwiki.jspwiki                 = http://www.jspwiki.org/Wiki.jsp?page={0}
+net.ugorji.oxygen.wiki.extwiki.wiki                    = http://c2.com/cgi/wiki?{0}
+net.ugorji.oxygen.wiki.extwiki.mailto                  = mailto:{0}
+net.ugorji.oxygen.wiki.extwiki.myserver                = {0}
+}}}
+
+{hide}{script:beanshell}Thread.sleep(10000);{/script}{/hide}
+
+= Advanced 
+
+ * Macros
+ * EditLocking
+ * Processors
+ * Actions
+ * Providers
+ * Processors
+ * [Email Notification]
+ * [User Preferences]
+

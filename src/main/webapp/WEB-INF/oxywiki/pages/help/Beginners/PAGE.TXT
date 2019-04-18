@@ -1,0 +1,40 @@
+{pi:camelcase=false /}
+
+== WikiWikiWeb 
+A WikiWikiWeb is a collaborative hypertext environment, with an emphasis on easy access to and modification of information. 
+
+You can edit any page by pressing the link at the bottom of the page. 
+
+You are encouraged to edit pages in the sandbox whichever way you like. Please restrain yourself from editing other pages until you feel at home with the ways a wiki works.
+
+To learn more about what a Wiki:WikiWikiWeb is, read about Wiki:WhyWikiWorks and the Wiki:WikiNature. Also, consult the Wiki:WikiWikiWebFaq and Wiki:OneMinuteWiki. 
+
+This wiki is also part of the InterWiki space, which means you can easily refer to a wealth of information available through other public wiki sites.
+
+Good starting points to explore a wiki are
+ * Main: Top level page of each section
+ * Search: search or browse the database in various ways
+ * Index: a list of all pages in the wiki
+ * [ Sandbox | sandbox:Main ] - feel free to change this page and experiment with editing
+
+For more help, see the [ Help pages | help:Main ]
+
+== Data Organization
+
+This wiki organizes data in a number of dimensions.
+
+# First, this wiki is a wiki-farm, and has different sections. Look at sections as you would look at folders within your mail application.
+# Secondly, each section can organize pages in a hierachy. Thus, you can have pages like {{ StatusReports }}, {{ StatusReports/May2007 }}
+# Thirdly, different metadata called tags (otherwise called labels) can be applied to pages. You can then search for pages with specific tags.
+
+This makes the search and cross-cutting organization of the wiki extremely powerful. Especially with the tags, the administrator 
+can constrain the allowed tags to a specific subset, or can have them free-form (so anyone can add any tag to a page).
+
+== Best Practices 
+
+Some best practices are written below:
+
+ * Give names which are 
+   * Capitalized Words (e.g. Current, First, Animals, Teams, etc)
+   * Camel Case words - first letter capitalized (e.g. NovemberIssues, HelpForBeginners, etc)
+

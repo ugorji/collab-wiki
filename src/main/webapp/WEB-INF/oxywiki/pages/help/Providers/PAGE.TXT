@@ -1,0 +1,135 @@
+
+Each section can define a unique location where its pages are stored.
+
+This allows a setup like this:
+ * A Wiki Engine has 5 sections
+   * Help section is pre-packaged in a jar file. Only reading is supported.
+   * Sandbox section is setup to get or write pages to a tmp directory somewhere
+   * Intranet1 section gets its pages from a database. Only reading is supported.
+   * Intranet2 section gets its pages from the same database. reading and writing are supported.
+   * public section gets its pages from CVS.
+
+Within a section, there is a seperate provider for pages, and a seperate one for attachments.
+
+== Built in providers 
+
+The built-in provider is a file system provider. This provider has hook points, such that
+you can persist it in different ways using helpers.
+ * Simple (each revision is stored as a standalone file in gzip format. Disk space intensive)
+ * RCS (RCS installed on the OS is used to persist the versions)
+ * Perforce (Perforce is used to persist the versions)
+
+The file system providers are:
+* net.ugorji.oxygen.wiki.extensions.filesystem.FSAttachmentProvider.java
+* net.ugorji.oxygen.wiki.extensions.filesystem.FSPageProvider.java
+* net.ugorji.oxygen.wiki.extensions.filesystem.FSPageReviewProvider.java
+* net.ugorji.oxygen.wiki.extensions.filesystem.FSRuntimePersistenceManager.java
+
+All of these depend on a property being set:
+{{ net.ugorji.oxygen.wiki.provider.filesystem.helper }}
+This is set to one of the following (depending on the persistence mechanism)
+* net.ugorji.oxygen.wiki.extensions.filesystem.OxygenVersioningHelper
+  * This stores all versions as gzip'ed files in a sub-directory of the page called .OXYVER
+* net.ugorji.oxygen.wiki.extensions.filesystem.RCSFSHelperViaCommandLineExec
+  * This stores the files as RCS files - leveraging the RCS binary installed on the Operating System
+* net.ugorji.oxygen.wiki.extensions.filesystem.P4FSHelperViaCommandLineExec
+  * This uses a remote Perforce server to store version information. It also requires the p4 binary on the Operating System.
+
+In addition, a do-nothing provider is supported, which could come in handy sometimes. 
+Use it for sections that U don't want to support attachments, pages, or reviews (e.g. help section).
+Just set the value to ** NULL ** (that exact string).
+* NULL
+
+==== RCS provider specifics
+Note that, if using RCS provider, your environment must be setup before your application 
+server is started. For example
+* RCS programs (co, ci, rcs, rlog should be on your PATH)
+* TZ environment variable should be set if running on windows
+
+Also, all files are stored with the flag "-kb", such that no keyword expansion or new line 
+conversion is done. It is like all files are stored in binary format.
+
+""" Also, RCS will do a no-op if the contents of the file being submitted does not change.
+Consequently, you cannot just change the tags or the subscribers of a page without slightly
+altering the content. """ 
+
+==== Perforce provider specifics
+If using the Perforce provider, the client depot directory should be sync'ed up before the server
+starts, and with the same client specs which are configured in the oxywiki-$categoryName.properties
+file.
+
+Perforce is sometimes slow in getting revision information (like last modified, by whom, etc). To
+accomodate this, we pre-load a cache using just 2 calls to the perforce server (to grab filelog information
+about the first and latest versions). This is relatively fast. Also, the information stored in the cache is 
+relatively small (even for thousands of files/pages).
+
+{{{
+net.ugorji.oxygen.wiki.provider.filesystem.location.base   = C:/wikidepot/XXX/XXX
+p4.pattern.client.from = [cC]:/wikidepot/(.*)
+p4.pattern.depot.to = //depot/$1
+p4.pattern.depot.from = //depot/(.*)
+p4.pattern.client.to = C:/wikidepot/$1
+#### test properties for section: p4test 
+p4.executable     = c:/P4/p4.exe
+p4.host           = XXX
+p4.port           = XXX.com:5999
+p4.user           = XXX
+p4.password       = XXX
+p4.client         = XXX.XXX
+}}}
+
+== Configuration 
+
+You configure these by editing your oxywiki-$section.properties.
+
+Basically, you define the property net.ugorji.oxygen.wiki.page.provider
+
+The default filesystem page and attachment providers use additional parameters listed below:
+ * ''Mandatory''
+   * net.ugorji.oxygen.wiki.provider.filesystem.location.base
+ * ''Optional''
+   * net.ugorji.oxygen.wiki.provider.filesystem.attachment.regex.not.match
+   * net.ugorji.oxygen.wiki.provider.filesystem.page.regex.not.match
+ 
+The use cases for the not-match configuration parameters, include
+ * If your files are coming from CVS, so U want to exclude the CVS directory from being treated as a sub-page
+ * If you want to exclude some files as being treated as attachments
+
+Samples are below:
+
+{{{
+net.ugorji.oxygen.wiki.provider.filesystem.location.base   = oxywiki/pages/help.jar
+net.ugorji.oxygen.wiki.page.provider                       = net.ugorji.oxygen.wiki.extensions.filesystem.FSPageProvider
+}}}
+
+{{{
+net.ugorji.oxygen.wiki.provider.filesystem.location.base   = oxywiki/pages/sandbox
+net.ugorji.oxygen.wiki.attachment.provider             = net.ugorji.oxygen.wiki.extensions.filesystem.FSAttachmentProvider
+net.ugorji.oxygen.wiki.page.provider                   = net.ugorji.oxygen.wiki.extensions.filesystem.FSPageProvider
+net.ugorji.oxygen.wiki.page.review.provider            = net.ugorji.oxygen.wiki.extensions.filesystem.FSPageReviewProvider
+}}}
+
+{{{
+net.ugorji.oxygen.wiki.provider.filesystem.location.base   = oxywiki/pages/mypagesfromcvs
+net.ugorji.oxygen.wiki.provider.filesystem.page.regex.not.match       = CVS
+net.ugorji.oxygen.wiki.provider.filesystem.attachment.regex.not.match = .*~|#.*
+}}}
+
+== Extension (Plugin) 
+
+It is easy to write your own providers.
+
+Just implement one of the following interfaces respectively:
+ * net.ugorji.oxygen.wiki.WikiPageProvider
+ * net.ugorji.oxygen.wiki.WikiPageReviewProvider
+ * net.ugorji.oxygen.wiki.WikiAttachmentProvider
+
+Then, add the appropriate line to the oxywiki-$section.properties file.
+
+== Note
+
+It is possible to remove intermediate versions of a page, as long as you keep the initial and final versions 
+i.e. version 1 and the latest. This is because the version 1 tells when the page was created and who the creator is,
+and the latest shows the last modified one. This information is key and retrieved to be stored in the index for
+searching et al.
+

@@ -1,0 +1,13 @@
+<% if(mb_showBorder) { %>
+
+<div class="breadcrumbs">
+<%= m_wi18n.str("templates.default.trail") %>
+<% m_wlh2.setVersion(-5);
+   for(int i = 0; i < msa_trail.length; i++) { 
+     m_wlh2.setWikiPage(msa_trail[i]); %>
+<a href="<%= WikiViewUtils.decipherURL(m_wlh2, "view") %>"><%= msa_trail[i] %></a> &raquo;
+<% } %>
+</div>
+
+<% } %>
+

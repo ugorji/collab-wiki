@@ -1,0 +1,15 @@
+<page>
+  <defaults skin="orange" layout-decorator="tigris" portlet-decorator="tigris" />
+  <title>Oxygen Wiki</title>
+
+  <fragment id="oxywiki-111123" type="layout" name="jetspeed-layouts::VelocityOneColumn">
+    <fragment id="oxywiki-311123" type="portlet" name="oxywiki::OxygenWikiPortlet">
+    </fragment>
+  </fragment>
+
+  <security-constraints>
+    <security-constraints-ref>public-view</security-constraints-ref>
+  </security-constraints>
+
+</page>
+

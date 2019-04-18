@@ -1,0 +1,22 @@
+
+This Wiki is designed to function as a portlet.
+
+It comes by default with the portlet support.
+
+There is a portlet.xml which enables the jsr-168 support. 
+
+You will just need to run this in a jsr-168 compliant portal.
+
+Some available options are 
+* Open-Source
+  * Exo
+  * Liferay
+  * Apache Jetspeed
+* Commercial
+  * Jahia
+  * JBoss Portal
+  * BEA WebLogic
+  * IBM WebSphere
+  * ...
+
+

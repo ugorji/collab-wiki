@@ -1,0 +1,5 @@
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title><%= m_wi18n.str("general.title_prefix") %> <%= m_wikiengine.getName() %>/<%= m_wcengine.getName() %> <%= ms_pageName %></title>
+<% if(mb_showRssLinkInHeader) { %>
+<link rel="alternate" type="application/rss+xml" title="<%= m_wikiengine.getName() %>/<%= m_wcengine.getName() %> RSS" href="<%= ms_rsslink %>">
+<% } %>

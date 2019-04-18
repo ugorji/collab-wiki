@@ -1,0 +1,14 @@
+[#ftl]
+<div class="wikitoc">
+<u><b>${tocTitle}</b> (<a href="#" onClick="oxywiki_toggle_visibility_for_id('wikitoc_contents');">${tocShowHide}</a>)</u><br/>
+<div id="wikitoc_contents" style="display:${displayValue};" >
+[#list tocHeaderLevels as mytochl ]
+  [#assign mylevel = tocHeaderLevels[mytochl_index] ]
+  &nbsp;&nbsp;[#if (mylevel > 1)][#list 2..mylevel as i]&nbsp;&nbsp;&nbsp;&nbsp;[/#list][/#if]<b>&bull;</b>
+  <a href="#${anchorprefix}${mytochl_index + 1}">${tocHeaderStrings[mytochl_index]}</a> <br/>
+[/#list]
+</div>
+</div>
+
+[#--  1[#if (mylevel > 1)][#list 2..mylevel as i].1[/#list][/#if] --]
+

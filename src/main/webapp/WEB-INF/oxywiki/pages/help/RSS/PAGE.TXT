@@ -1,0 +1,25 @@
+
+= RSS
+
+This Wiki supports RSS feeds of the recent changes of the wiki. 
+In addition, it also allows you to show the results of any arbitrary search in RSS. This
+way, users can track whatever they need to (by constructing a search query with RSS results).
+
+This implementation allows one to
+* Subscribe for RSS feeds of recent changes for any number of sections (individually or together or a set thereof)
+* Subscribe for RSS feeds of any other arbitrary search. The full gamut of possible searches has this functionality.
+
+== Configuration 
+
+To have a link show in the head portion of your page, so that browsers can pick it up
+and put the appropriate visual for easy adding to aggregation, configure the 
+following. It's value is true or false.
+
+This allows like Firefox LiveBookmarks feature to work for your site.
+
+~~ You configure these by editing your oxywiki-$section.properties. ~~
+
+{{{
+net.ugorji.oxygen.wiki.show.rss.link.in.header         = true
+}}}
+

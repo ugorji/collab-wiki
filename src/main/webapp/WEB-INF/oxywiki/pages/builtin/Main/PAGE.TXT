@@ -1,0 +1,4 @@
+This is the builtin section of the wiki.
+
+The Oxygen Wiki uses this internally.
+

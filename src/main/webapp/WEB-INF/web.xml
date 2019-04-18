@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+  <context-param>
+    <param-name>net.ugorji.oxygen.web.application</param-name>
+    <param-value>net.ugorji.oxygen.wiki.WikiApplication</param-value>
+  </context-param>
+  <context-param>
+    <param-name>net.ugorji.oxygen.web.properties</param-name>
+    <param-value>net.ugorji.oxygen.wiki.config.override.properties</param-value>
+  </context-param>
+  <listener>    
+    <listener-class>net.ugorji.oxygen.web.OxygenWebSessionListener</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>WikiServlet</servlet-name>
+    <servlet-class>net.ugorji.oxygen.web.OxygenWebServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WikiServlet</servlet-name>
+    <url-pattern>/p/*</url-pattern>
+  </servlet-mapping>
+  <!-- MIME TYPES SHOULD BE INSERTED HERE -->
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/showerror.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>403</error-code>
+    <location>/showerror.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/showerror.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/showerror.jsp</location>
+  </error-page>
+</web-app>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <!-- You can pre-configure your config, runtime and other properties in the web.xml file -->
+  <!-- By default, the values are as below -->
+  <!-- EITHER USE THIS AS A LISTENER, OR AS A STARTUP SERVLET -->
+  <!--
+
+  <servlet>
+    <servlet-name>wiki_srv_listener</servlet-name>
+    <servlet-class>net.ugorji.oxygen.wiki.WikiWebappListener</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Pages</web-resource-name>
+      <url-pattern>/p/admin/*</url-pattern>
+      <url-pattern>/p/editconfig/*</url-pattern>
+      <http-method>POST</http-method>
+      <http-method>GET</http-method>
+    </web-resource-collection>     
+    <auth-constraint>
+      <role-name>oxywikiadmin</role-name>
+    </auth-constraint>     
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Ugorji category pages</web-resource-name>
+      <url-pattern>/p/edit/ugorji/*</url-pattern>
+      <url-pattern>/p/editconfig/ugorji/*</url-pattern>
+      <url-pattern>/p/edit/ugorji/*</url-pattern>
+      <http-method>POST</http-method>
+      <http-method>GET</http-method>
+    </web-resource-collection>     
+    <auth-constraint>
+      <role-name>ugorji_category_role</role-name>
+    </auth-constraint>     
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>default</realm-name>
+  </login-config>
+   
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <realm-name>default</realm-name>
+    <form-login-config>
+      <form-login-page>/p/login/builtin</form-login-page>
+      <form-error-page>/p/login/builtin?loginerror=true</form-error-page>
+    </form-login-config>
+  </login-config>
+   
+  <security-role>
+    <role-name>oxywikiadmin</role-name>
+  </security-role>
+
+  <security-role>
+    <role-name>ugorji_category_role</role-name>
+  </security-role>
+-->
+  

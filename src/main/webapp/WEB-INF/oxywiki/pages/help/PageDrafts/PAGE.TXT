@@ -1,0 +1,21 @@
+
+== Using Page Drafts
+
+Sometimes, you do not want to register multiple changes on a page, but want to save your
+work temporarily, to continue at a later time.
+
+Page Drafts come in handy here. The pages are not committed to the repository, but are saved
+off in a temporary place, and are re-loaded from there the next time you want to make a change.
+
+This is only enabled by configuration. When page drafts are supported, you must configure your 
+cache manager to be an instance of OxygenPersistentCacheManager. Basically, the cache should not
+be cleared when the server is shutdown.
+
+By default, page drafts are supported on all sections, except sandbox.
+
+== Configuration 
+
+{{{
+net.ugorji.oxygen.wiki.page_draft_supported = true
+}}}
+

@@ -1,0 +1,62 @@
+
+Installing is very simple:
+
+== Simple Installation 
+
+The oxywiki distribution is pre-configured for a seamless installation. To do this:
+ # Download the distribution (oxywiki.war OR oxywiki-no-lib-jars.zip). This contains
+   * README.txt (this file)
+   * Contents of the web application 
+   * ~~ If oxywiki.war, it also contains all dependent lib jars in WEB-INF/lib/ ~~
+ # Unzip it into a directory
+ # ~~ If you downloaded oxywiki.war, skip this step. ~~ \\ \
+   Download the third party jars which oxywiki depends on. Put them in the WEB-INF/lib directory \
+   after unzipping the zip archive, or on the classpath of your server (so it can be shared with other applications). These are
+   * Mandatory
+     # oxy-jdk-extensions.jar
+     # oxy-common.jar 
+     # oxy-markup.jar 
+     # oxy-wiki-classes.jar 
+     # oxy-wiki-resources.jar 
+     # freemarker.jar
+     # lucene-core.jar,
+     # org.suigeneris.jrcs.diff.jar
+     # commons-logging.jar,
+     # commons-fileupload.jar, (1.1 has a bad bug, causing all filenames to be lowercase)
+     # commons-io.jar
+     # rome.jar (only if using rss macro, and for the RSS action)
+   * Optional
+     # radeox_base.jar (only if leveraging radeox macros)
+     # ehcache.jar (only if using ehcache as your caching provider, or if the jcaptcha action is configured)
+     # bsf.jar (only if using the script macro - some people disable this for security reasons)
+     # bsh.jar (only if using the script macro - and leveraging beanshell as your scripting engine)
+     # jhlabs-imaging.jar (only if enabling captcha, to prevent spam, and ensure humans post entries to the wiki)
+     # jdom.jar (only if using rss macro - rss macro uses rome.jar which internally uses jdom.jar)
+ # Deploy the directory to your web application server (e.g. tomcat, resin, weblogic, websphere)
+   * e.g. deploy with the context-path /oxywiki onto ``http://localhost:7001``
+ # Look up the startup page
+   * in example above, it is ``http://localhost:7001/oxywiki/``
+
+== Extended configuration during installation 
+
+A couple of configuration properties allow you specify where data is written to by the wiki. These are the 
+more important startup configuration parameters.
+ :: net.ugorji.oxygen.wiki.persistence.dir :: The directory which config, runtime and pages are stored.
+
+ :: net.ugorji.oxygen.config.dir :: defaults to ${net.ugorji.oxygen.wiki.persistence.dir}/config
+ :: net.ugorji.oxygen.runtime.dir :: defaults to ${net.ugorji.oxygen.wiki.persistence.dir}/runtime
+ :: net.ugorji.oxygen.wiki.provider.filesystem.location.base.prefix :: defaults to ${net.ugorji.oxygen.wiki.persistence.dir}/pages
+
+You start up configuring oxywiki for your environment, from this file. 
+To do this, update the {{ WEB-INF/classes/net.ugorji.oxygen.wiki.config.override.properties}} .
+In here, you specify, at a minimum, the persistence directory. E.g.
+{{{
+net.ugorji.oxygen.wiki.persistence.dir = /home/oxywiki/persistence
+}}}
+By default, the config, runtime and pages directory are created here. You can also specify
+these explicitly, as shown above.
+
+Also, you may want to create an about page for your instance, and configure it in the oxywiki.properties.
+ :: net.ugorji.oxygen.wiki.about.page :: defaults to help:About
+
+-- Ugorji

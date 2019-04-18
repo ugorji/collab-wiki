@@ -1,0 +1,20 @@
+
+Within this Wiki implementation, we allow the pluggability of any logging mechanism the user chooses.
+
+We do this by leveraging the [Apache Commons Logging Framework | http://jakarta.apache.org/commons/logging/index.html], which allows us dynamically plug in a logging implementation at runtime.
+
+This wiki bundles a plugin, which allows you to configure a JDK 1.4 Log Handler which writes logs to logs/wikiengine.log under the wiki engine's runtime directory. By default, this is not configured. You can configure it in your oxywiki.properties file as below. If you want to enable log file rotation, please configure your log manager properties for FileHandler. More of this is found in the FileHandler API (e.g. available at [http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/FileHandler.html] ).
+
+Note that, if log4j is on your classpath, Apache Commons Logging will delegate to it (so even if the plugin is configured, it will have no effect).
+
+== Configuration 
+
+You configure these by editing your oxywiki.properties.
+
+Basically, you define the property net.ugorji.oxygen.logging.level, which is one of INFO, ERROR OR DEBUG.
+
+{{{
+net.ugorji.oxygen.wiki.plugin.preinit.logging           = net.ugorji.oxygen.web.JdkWebLoggingPlugin
+net.ugorji.oxygen.logger.level                          = INFO
+}}}
+

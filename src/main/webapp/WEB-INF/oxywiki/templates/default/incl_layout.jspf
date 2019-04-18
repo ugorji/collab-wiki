@@ -1,0 +1,78 @@
+
+<style type="text/css" media="screen,projection,print" >
+/* <![CDATA[ */
+body {
+  margin: 5px 1%;
+  width: 98%;
+}
+.leftmenu {
+  float: left;
+}
+.rightmenu {
+  float: right;
+}
+/* ]]> */
+</style>
+<% if(mb_hideMenuOnPrintMedia) { %>
+<link rel="stylesheet" media="print" type="text/css" href="<%= ms_ctxpath %>/stylesheets/print.css" />
+<style type="text/css" media="print" >
+/* <![CDATA[ */
+#oxywiki_view3navwrap, .oxywiki_menu_links, .leftmenu, .rightmenu, .topmenu, .bottommenu, #navigation, #footer, .breadcrumbs, .noprint { display: none; }
+.mainwikipage {
+  float: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* ]]> */</style>
+<% } %>
+<style type="text/css" media="screen,projection" >
+/* <![CDATA[ */
+.mainwikipage {
+  float: none;
+  <% if(mb_leftPageExists || mb_showCalendarInLeft) { %>margin-left: 200px<% } %>
+  <% if(mb_rightPageExists || mb_showCalendarInRight) { %>margin-right: 200px<% } %> 
+}
+/* ]]> */
+</style>
+
+<script language="javascript">
+<!--
+
+//var c = document.getElementById('oxywiki_mainwikipage').style;
+//alert('c.marginLeft: ' + c.marginLeft + ' c.marginRight: ' + c.marginRight);
+//c.marginRight = b.offsetWidth + 10 + "px"; 
+//c.setProperty('margin-right', b.offsetWidth + 20 + "px", null); 
+function oxywiki_fix_css() {
+  var a = document.getElementById('oxywiki_leftmenu');
+  var b = document.getElementById('oxywiki_rightmenu');
+  var c = oxy_get_last_css_rule('.mainwikipage').style;
+  if(a) {
+    c.marginLeft = a.offsetWidth + 10 + "px"; 
+  }
+  if(b) {
+    c.marginRight = b.offsetWidth + 10 + "px"; 
+  }
+}
+
+function oxywiki_all_load_work() {
+  oxywiki_view3_menu_startList();
+  oxywiki_fix_css();
+}
+
+window.onload = oxywiki_all_load_work;
+-->
+</script>
+
+
+
+
+
+
+<%--
+.mainwikipage {
+  float: none;
+  <% if(mb_leftPageExists || mb_showCalendarInLeft) { %>margin-left: 200px<% } %>
+  <% if(mb_rightPageExists || mb_showCalendarInRight) { %>margin-right: 200px<% } %> 
+  <% if(mb_leftPageExists || mb_showCalendarInLeft) { %>margin-left: expression(this.ownerDocument.getElementById('oxywiki_leftmenu').offsetWidth + 10 + "px");<% } %>
+}
+--%>

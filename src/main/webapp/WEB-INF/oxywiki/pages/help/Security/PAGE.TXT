@@ -1,0 +1,58 @@
+
+Security is a very big part of any web-based application.
+
+Security was paramount when the design of this wiki was done.
+
+Since web-based security is primarily done from a '/' seperated request-path analysis, we leveraged this extensively.
+
+The request path contains the action, section and pagename in order. The servlet paths (e.g. in your browser) are like this:
+ * `` __contextpath__ / oxy / __action__ / __section__ / page [ #anchor | / __attachment__ ] ``
+
+
+For example, let's say your request is this:
+||- Section:  || nigeria             
+||- Page:      || Technology/Software 
+
+
+The table below shows some corresponding URLs for different actions:
+||- Action: ||- URL 
+||  view    ||  ``http://myhost/wiki/p/view/nigeria/Technology/Software`` 
+||  edit    ||  ``http://myhost/wiki/p/edit/nigeria/Technology/Software`` 
+||  admin   ||  ``http://myhost/wiki/p/admin/nigeria`` 
+
+
+Consequently, you can have security permissions like
+ * To access /p/view/nigeria/Technology/*, you must be in the role nigeria-technology-viewers
+ * To do admin, you need to access /p/admin/nigeria, and must be in the role admin
+
+By designing the security as such, it becomes very easy to leverage standard web application security mechanisms, via the web.xml resource-constraints.
+
+Also, since users can write into the system, we have to ensure that they cannot put 
+arbitrary html code into the pages. We do this, by ensuring that we can ensure that only wiki 
+markup is allowed. To support this, we allow users to turn on or off 
+* the ability to write code AS IS.
+  * e.g. `` {asis} <script ... /> {/asis} ``
+* the ability to set the processing instruction, that says that html should not be escaped.
+  * `` {pi:escapehtml=false/} ``
+
+==== Captcha 
+To prevent automated posting, captcha is supported.
+
+Here, the user has to type a randomly created word, which is only human readable. 
+
+This challenge is only done once per session. (So a user does not have to go through
+this every time).
+
+You can configure what characters to use in the captcha. Each time the challenge is
+presented to a user, 5 characters are randomly selected from the list configured. You
+can also configure the fonts used.
+
+==== Configuration
+{{{
+net.ugorji.oxygen.wiki.asis.supported                  = false
+net.ugorji.oxygen.wiki.html.tags.supported             = false
+net.ugorji.oxygen.wiki.html.escape                     = true
+net.ugorji.oxygen.wiki.captcha.enabled                 = true
+net.ugorji.oxygen.captcha.fontnames                    = Arial, Dialog
+net.ugorji.oxygen.captcha.charranges                   = A-Z,3-8
+}}}

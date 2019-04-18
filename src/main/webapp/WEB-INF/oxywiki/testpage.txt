@@ -1,0 +1,75 @@
+My name is Ugorji
+Hello 
+
+  GHello 
+Hello 
+
+** 
+
+hello
+
+**
+
+ GHello 
+=== Hello == 
+Hello 
+
+GHello 
+How are you **hello**hi 
+
+there
+* Hi
+  * Hi 2
+  * Hi 22
+ 
+||- A0 ||- B0 
+||  A  ||  B  
+||  A  ||  je; \
+           I always wanted to come here, and see how things are looking \
+           But I never got the chance to. || Thanks
+||  A  ||
+||  A  ||
+
+
+{code:java}
+public class UgorjiClass {
+  private boolean cool;
+  public UgorjiClass() {
+    cool = true;
+  }
+  public boolean isCool() {
+    return cool;
+  }
+  // {br /}
+  // {currtime /}
+}
+{/code}
+
+WHAT
+
+{sayhi/} {br/}
+
+WHAT THE
+
+:: My name is :: Ugorji
+:: Elephant   :: Elephant
+
+You also create definition lists, by using a ``::`` notation.
+
+:: Human :: A person who can speak, eat, and so on and so forth
+:: Woman :: A female human being
+:: Man   :: A male human being
+
+== helo
+
+== hi
+== hmm ==
+== hmm
+
+:: Human :: A person who can speak, eat, and so on and so forth
+:: Woman :: A female human being
+
+||- A0 ||- B0 
+||  A  ||  B  
+||  A  ||  
+||  A  ||

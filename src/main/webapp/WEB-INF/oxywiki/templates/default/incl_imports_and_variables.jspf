@@ -1,0 +1,252 @@
+<%-- 
+    View Page (for view, preview) and others (e.g. pageinfo, search, etc)
+    contentType="text/html; charset=UTF-8" 
+--%><%@ page 
+    errorPage="jsp-error.jsp"
+    import="net.ugorji.oxygen.wiki.*,
+	    net.ugorji.oxygen.util.*,
+	    net.ugorji.oxygen.web.*,
+	    java.io.*,
+	    java.text.DateFormat,
+	    java.util.*" 
+%><%  
+  // we use descriptive variable names here
+  // strings are ms_, int's are mi_, booleans are mb_, other objects are m_
+  WebInteractionContext m_wikiwebctx = WebLocal.getWebInteractionContext();
+  WikiCategoryEngine m_wcengine = WikiLocal.getWikiCategoryEngine();
+  I18n m_wi18n = WebLocal.getI18n();
+  WikiLinkHolder m_wlh = WikiLocal.getWikiLinkHolder();
+  WikiEngine m_wikiengine = WikiLocal.getWikiEngine();
+  WikiProvidedObject m_wp = WikiUtils.getWikiPage();
+
+  Map m_extraparams = new HashMap();
+  
+  String ms_attCommToggleAnchor = String.valueOf(WikiViewUtils.nextRandomInt(99));
+  
+  String ms_jsppage = (String)m_wlh.getAttribute(WikiConstants.TEMPLATE_JSPPAGE_KEY);
+  
+  boolean mb_showLogoutLink = ("true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.logout")) && 
+                               (WebLocal.getWebInteractionContext().getUserPrincipal() != null));
+  
+  boolean mb_showRssLinkInHeader = "true".equals(m_wcengine.getProperty(WikiConstants.SHOW_RSS_LINK_IN_HEADER_KEY));
+  
+  boolean mb_tmplViewFullpage = !(m_wikiwebctx.allowOnlyHTMLFragments());
+  
+  DateFormat m_df = DateFormat.getDateTimeInstance
+    (DateFormat.DEFAULT, DateFormat.DEFAULT, m_wlh.getLocale());
+  
+  String ms_ctxpath = m_wikiwebctx.getContextPath();
+  boolean mb_showBorder = ((Boolean)m_wlh.getAttribute(WikiConstants.TEMPLATE_SHOWBORDERS_KEY)).booleanValue();
+
+  boolean mb_showTopLinks = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.toplinks"));
+  boolean mb_showNameInPage = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.pagename"));  
+  boolean mb_showpageinfo = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.pageinfo"));
+  boolean mb_showattachments = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.attachments"));
+  boolean mb_showreviews = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.reviews"));
+  boolean mb_showinlinereviews = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "show.inlinereviews"));
+
+  if(m_wp != null && 
+     m_wp.getVersion() == WikiProvidedObject.VERSION_LATEST_DETAILS_UNNECESSARY && 
+     m_wcengine.getPageProvider().pageExists(m_wp.getName())) {
+    m_wp = m_wcengine.getPageProvider().getPage(m_wp.getName(), WikiProvidedObject.VERSION_LATEST_DETAILS_NECESSARY);
+    m_wlh.setVersion(WikiProvidedObject.VERSION_LATEST_DETAILS_NECESSARY);
+    //WikiUtils.setWikiLinkHolder(m_wikiwebctx, m_wlh);
+    //WikiUtils.setWikiPage(m_wikiwebctx, m_wp);
+  }
+  String ms_username = m_wikiwebctx.getUserName();
+  String ms_adminemail = m_wcengine.getProperty("net.ugorji.oxygen.wiki.admin.email");
+  String ms_stylesheets = m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "stylesheets");
+	
+  String ms_currentactionlink = m_wikiwebctx.toURLString(m_wlh, null);
+  
+  WikiLinkHolder m_wlh2 = m_wlh.getClone();
+
+  m_extraparams.put("details", "true");
+  String ms_detailslink = m_wikiwebctx.toURLString(m_wlh2, m_extraparams);
+  m_extraparams.clear();
+  
+  m_wlh2.setWikiPage(m_wcengine.getEntryPage());
+  m_wlh2.setVersion(-1);
+  String ms_mainurl = WikiViewUtils.decipherURL(m_wlh2, "view");
+  m_wlh2.setVersion(m_wlh.getVersion());
+  //m_wlh2.setWikiPage("pageindex");
+  //String ms_pageindexlink = WikiViewUtils.decipherURL(m_wlh2, "view");
+  m_wlh2.setWikiPage(m_wlh.getWikiPage());
+  String ms_updateusersessionlink = WikiViewUtils.decipherURL(m_wlh2, "updateusersession");
+  String ms_pageindexlink = WikiViewUtils.decipherURL(m_wlh2, "pageindex");
+  String ms_listpageslink = WikiViewUtils.decipherURL(m_wlh2, "listpages");
+  //String ms_recentchangeslink = WikiViewUtils.decipherURL(m_wlh2, "recentchanges");
+  //String ms_rsslink = WikiViewUtils.decipherURL(m_wlh2, "rss");
+  String ms_rsslink = WikiViewUtils.decipherURL(m_wlh2, "search", new String[]{"rss", "true", "wiki.submit", "true", WikiConstants.SEARCH_INDEX_LAST_MODIFIED, "1"});
+  //System.out.println("ms_rsslink: " + ms_rsslink);
+  m_wlh2.setWikiPage(m_wlh.getWikiPage());
+  
+  String ms_viewlink = WikiViewUtils.decipherURL(m_wlh2, "view");
+
+  String ms_printablelink = WikiViewUtils.decipherURL(m_wlh2, "printableview");
+
+  String ms_rawlink = WikiViewUtils.decipherURL(m_wlh2, "raw");
+  
+  String ms_deletepromptlink = WikiViewUtils.decipherURL(m_wlh2, "deleteprompt");
+  String ms_editlink = WikiViewUtils.decipherURL(m_wlh2, "edit");
+  String ms_deletelink = WikiViewUtils.decipherURL(m_wlh2, "delete");
+  String ms_attachmentslink = WikiViewUtils.decipherURL(m_wlh2, "attachments");
+  String ms_reviewlink = WikiViewUtils.decipherURL(m_wlh2, "review");
+  String ms_misclink = WikiViewUtils.decipherURL(m_wlh2, "misc");
+  String ms_pageinfolink = WikiViewUtils.decipherURL(m_wlh2, "pageinfo");
+  //String ms_blogbrowselink = WikiViewUtils.decipherURL(m_wlh2, "blogbrowse");
+  //String ms_adminlink = WikiViewUtils.decipherURL(m_wlh2, "admin");
+  String ms_adminlink = WikiUtils.getCategoryURL(WikiConstants.BUILTIN_SECTION_NAME, "admin", null);
+  String ms_cmdlinelink = WikiUtils.getCategoryURL(WikiConstants.BUILTIN_SECTION_NAME, "cmdline", null);
+  String ms_sysinfolink = WikiViewUtils.decipherURL(m_wlh2, "sysinfo");
+  String ms_sectionslink = WikiViewUtils.decipherURL(m_wlh2, "sections");
+  //String ms_sectionslink = WikiUtils.getCategoryURL(WikiConstants.BUILTIN_SECTION_NAME, "sections", null);
+  String ms_userprefslink = WikiViewUtils.decipherURL(m_wlh2, "userprefs");
+  //String ms_userprefslink = WikiUtils.getCategoryURL(WikiConstants.BUILTIN_SECTION_NAME, "userprefs", null);
+  String ms_refslink = WikiViewUtils.decipherURL(m_wlh2, "refs");
+  String ms_searchlink = WikiViewUtils.decipherURL(m_wlh2, "search");
+  
+  String ms_logoutlink = WikiViewUtils.decipherURL(m_wlh2, "logout");
+  
+  String ms_helplink = WikiUtils.getCategoryURL("help", WikiConstants.ACTION_VIEW, null);
+  String ms_aboutlink = m_wcengine.getProperty("net.ugorji.oxygen.wiki.about.page");
+  ms_aboutlink = WikiViewUtils.getColonisedLink(ms_aboutlink, "view");
+  
+  boolean mb_isViewPage = (m_wlh.getAction().equals("view") || m_wlh.getAction().equals("printableview"));
+
+  boolean mb_hideMenuOnPrintMedia = "true".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "hide_menu_on_print_media"));
+  
+  boolean mb_indexDetailsOfPage = "true".equals(m_wcengine.getProperty(WikiConstants.INDEX_DETAILS_OF_PAGE_KEY));
+
+  boolean mb_showCalendarInLeft = mb_indexDetailsOfPage && "Left".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "calendar.location"));
+  boolean mb_showCalendarInRight = mb_indexDetailsOfPage && "Right".equals(m_wcengine.getProperty(WikiConstants.TEMPLATE_PROPERTY_PREFIX + "calendar.location"));
+  
+  String ms_leftmenu = m_wcengine.getProperty(WikiConstants.PAGE_DECORATION_PREFIX + "left");
+  String ms_rightmenu = m_wcengine.getProperty(WikiConstants.PAGE_DECORATION_PREFIX + "right");
+  String ms_topmenu = m_wcengine.getProperty(WikiConstants.PAGE_DECORATION_PREFIX + "top");
+  String ms_bottommenu = m_wcengine.getProperty(WikiConstants.PAGE_DECORATION_PREFIX + "bottom");
+
+  boolean mb_leftPageExists = WikiViewUtils.isDecorationPageExist(ms_leftmenu);
+  boolean mb_rightPageExists = WikiViewUtils.isDecorationPageExist(ms_rightmenu);
+  boolean mb_topPageExists = WikiViewUtils.isDecorationPageExist(ms_topmenu);
+  boolean mb_bottomPageExists = WikiViewUtils.isDecorationPageExist(ms_bottommenu);
+
+  String ms_inlinereviewslink = "javascript:oxywiki_toggle_visibility_for_id_prefix('oxy_inline_review_');";
+  boolean mb_pageExists = false;
+
+  String ms_pageName = null;
+  if(m_wp != null) {
+    ms_pageName = m_wp.getName();
+    mb_pageExists = m_wcengine.getPageProvider().pageExists(ms_pageName);
+  }
+  if(ms_pageName == null) {
+    //ms_pageName = "[No Page]";
+    ms_pageName = "";
+  }
+  
+  m_wlh2 = m_wlh.getClone();
+  
+  if(mb_pageExists && mb_isViewPage) {
+    m_wlh2.setAction("view");
+
+    ms_viewlink = m_wikiwebctx.toURLString(m_wlh2, null);
+    m_wlh2.setAction("printableview");
+    ms_printablelink = m_wikiwebctx.toURLString(m_wlh2, null);
+  }
+  
+  //m_extraparams.put("changeperiod", "1");
+  //m_wlh2.setAction("recentchanges");
+  //ms_recentchangeslink = m_wikiwebctx.toURLString(m_wlh2, m_extraparams);
+  
+  int mi_maxTrailSize = 7;
+  try {
+    mi_maxTrailSize = Integer.parseInt((String)m_wcengine.getProperty(WikiConstants.MAX_TRAIL_SIZE_KEY));
+  } catch(Exception exc) { }
+  String[] msa_trail = WikiLocal.getWikiUserSession().getViewTrail(mi_maxTrailSize);
+
+  Locale[] m_locales = m_wcengine.getSupportedUILocales();
+
+  m_wlh2 = m_wlh.getClone();
+  m_extraparams.clear();
+
+  //set the menu
+  WikiViewUtils.Menu m_menu = new WikiViewUtils.Menu();
+  int iRow = 0;
+  //System.out.println(" << " + iRow + " " + m_menu.getNumCategories());
+  //System.out.println(" ... " + iRow + " " + m_menu.getNumCategories());
+  //iRow++;
+  //m_menu.addItem(iRow, "", m_wi18n.str("templates.default.menu") + " &rArr;");
+  //System.out.println(" ... " + iRow + " " + m_menu.getNumCategories());
+  iRow++;
+  m_menu.addItem(iRow, "", m_wi18n.str("templates.default.page_actions"));
+  if(mb_pageExists) {
+    if(mb_isViewPage) {
+      m_menu.addItem(iRow, ms_pageinfolink, m_wi18n.str("templates.default.page_info"));
+      m_menu.addItem(iRow, ms_printablelink, m_wi18n.str("templates.default.printable_view"));
+    }
+    m_menu.addItem(iRow, ms_viewlink, m_wi18n.str("templates.default.view"));
+    if(mb_isViewPage) {
+      m_menu.addItem(iRow, ms_rawlink, m_wi18n.str("templates.default.raw"));
+      m_menu.addItem(iRow, "", " ");
+      if(m_wcengine.isActionSupported("edit")) {
+        m_menu.addItem(iRow, ms_editlink, m_wi18n.str("templates.default.edit"));
+      }
+      if(m_wcengine.isActionSupported("delete")) {
+        m_menu.addItem(iRow, ms_deletepromptlink, m_wi18n.str("templates.default.delete"));
+        //m_menu.addItem(iRow, "javascript:oxywiki_js_confirmfordelete('" + ms_pageName + "', '" + ms_deletelink + "');", m_wi18n.str("templates.default.delete"));
+      }
+      if(m_wcengine.isActionSupported("attachments")) {
+        //m_menu.addItem(iRow, ms_attachmentslink, m_wi18n.str("templates.default.add_attachments"));
+      }
+      if(m_wcengine.isActionSupported("review")) {
+        //m_menu.addItem(iRow, ms_reviewlink, m_wi18n.str("templates.default.add_review"));
+      }
+    }
+  }
+  //System.out.println(" ... " + iRow + " " + m_menu.getNumCategories());
+  iRow++;
+  m_menu.addItem(iRow, "", m_wi18n.str("templates.default.section_wide_actions"));
+  m_menu.addItem(iRow, ms_sysinfolink, m_wi18n.str("templates.default.sysinfo"));
+  m_menu.addItem(iRow, "", " ");
+  m_menu.addItem(iRow, ms_pageindexlink, m_wi18n.str("templates.default.index"));
+  if(WikiUtils.allowPublish()) {
+    m_menu.addItem(iRow, ms_listpageslink, m_wi18n.str("templates.default.listpages"));
+  }
+  //m_menu.addItem(iRow, ms_recentchangeslink, m_wi18n.str("templates.default.recent_changes"));
+  //m_menu.addItem(iRow, ms_rsslink, m_wi18n.str("templates.default.rss"));
+  //m_menu.addItem(iRow, ms_refslink, m_wi18n.str("templates.default.refs"));
+
+  m_menu.addItem(iRow, ms_misclink, m_wi18n.str("templates.default.misc"));
+
+  /*
+  m_wlh2.setAction("misc");
+  m_extraparams.clear();
+  m_extraparams.put("visible", "rss");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.rss_or_recent_changes"));
+  m_extraparams.put("visible", "view");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.goto_page"));
+  m_extraparams.put("visible", "copy");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.goto_copy_page"));
+  m_extraparams.put("visible", "template");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.goto_page_template"));
+  m_extraparams.put("visible", "decorator");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.goto_page_decorator"));
+  m_extraparams.put("visible", "user");
+  m_menu.addItem(iRow, m_wikiwebctx.toURLString(m_wlh2, m_extraparams), m_wi18n.str("templates.default.goto_user"));
+  */
+  
+  //System.out.println(" ... " + iRow + " " + m_menu.getNumCategories());
+  iRow++;
+  m_menu.addItem(iRow, "", m_wi18n.str("templates.default.engine_wide_actions"));
+  m_menu.addItem(iRow, ms_sectionslink, m_wi18n.str("templates.default.sections"));
+  m_menu.addItem(iRow, ms_searchlink, m_wi18n.str("templates.default.search"));
+  m_menu.addItem(iRow, ms_userprefslink, m_wi18n.str("templates.default.userprefs"));
+  m_menu.addItem(iRow, ms_adminlink, m_wi18n.str("templates.default.admin"));
+  //m_menu.addItem(iRow, ms_cmdlinelink, m_wi18n.str("templates.default.cmdline"));
+  //m_menu.addItem(iRow, "", " ");
+  m_wlh2.setAction("view"); 
+  m_wlh2.setAnchor(""); 
+  //m_wlh2.getExtraparams().remove("locale");
+  
+  //System.out.println(" >> " + iRow + " " + m_menu.getNumCategories());
+%>

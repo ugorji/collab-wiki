@@ -1,0 +1,17 @@
+{asis}
+
+<table border=1>
+<tr>
+<td>Hi there</td>
+<td>Hi there 2</td>
+</tr>
+<tr>
+<td>Hi there 3</td>
+<td>Hi there 4</td>
+</tr>
+</table>
+
+{/asis}
+
+- Ugorji
+

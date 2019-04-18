@@ -1,0 +1,9 @@
+<% if(ms_stylesheets != null) { 
+     StringTokenizer stz = new StringTokenizer(ms_stylesheets, " ,");
+     while(stz.hasMoreTokens()) { 
+       String s = stz.nextToken();
+       s = StringUtils.replacePropertyReferencesInString(s, m_wcengine.getProperties());
+%>
+<link rel="stylesheet" media="all" type="text/css" href="<%= s %>" />
+<%   } %>
+<% } %>

@@ -1,0 +1,55 @@
+= Inline Review 
+
+A blockquote is used to show inline reviews.
+
+Inline Reviews are special, because on the view page, you can toggle them on or off.
+
+They really come in handy, for collaborative editing, since you can put review comments in place.
+
+=== Example 
+{{{
+""
+Hi there. I think this page is getting too long.\\
+If you click ''Show/Review comments'' at the bottom, this will get hidden or shown.\\ 
+Maybe split it up into different areas. '''You heard me'''
+
+-|| Bogus -|| blah
+ || thanks || yes
+
+""
+}}}
+
+=== Display 
+""
+Hi there. I think this page is getting too long.\\
+If you click ''Show/Review comments'' at the bottom, this will get hidden or shown.\\ 
+Maybe split it up into different areas. '''You heard me'''
+
+-|| Bogus -|| blah
+ || thanks || yes
+
+""
+
+= Reviews (External) 
+
+These are like review comments, which are attached to a page (as opposed to being part of the page).
+
+This allows you comment on a page, or see other comments which have been posted to the page.
+
+A review comments basically has 3 parts
+ * Author
+ * Date
+ * Text of the comment
+
+Review comments, like everything else, can use the full blown Wiki syntax.
+
+'' They show up specially on the view page also (since they use a special CSS class to support them). Consequently, if defining your own template or CSS file, ensure you have a definition for class 'wikireview' ''
+
+= Configuration 
+
+You configure these by editing your oxywiki.properties, or the corresponding oxywiki-$section.properties.
+
+You can configure allowing the reviews to be enabled or disabled.
+
+You can also configure how your reviews are stored.
+

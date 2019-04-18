@@ -1,0 +1,196 @@
+
+Properties files are leveraged for the configuration. 
+
+Sample configuration is contained in the attached files.
+
+==== Initialization configuration file 
+
+This is /WEB-INF/web.xml
+
+In this file, we configure:
+ * the configuration directory (where the oxywiki.properties, and corresponding oxywiki-$sectionname.properties are)
+
+Some reasonable defaults are also configured (in /WEB-INF/oxywiki/init.properties).
+
+==== Top level configuration file 
+
+This is ''oxywiki.properties''.
+
+These are typically configured in the oxywiki.properties file, so they are available to every section.
+
+==== section configuration file 
+
+Each section must have a corresponding oxywiki-$sectionname.properties file.
+
+Basically, each section is configured by 
+ * inheriting from a top-level (engine-wide) configuration file
+ * over-riding things in a section configuration file
+
+Sample sequence of events:
+* I have a section named mysection1
+* I update oxywiki.properties, so it contains something like like
+  * net.ugorji.oxygen.wiki.categories = help, sandbox, mysection1
+* I create oxywiki-mysection1.properties
+  * I want to use the default page providers, so I configure the basedir at a minimum
+    * net.ugorji.oxygen.wiki.provider.filesystem.basedir = oxywiki/pages/help.jar
+
+==== Some Configuration options 
+
+||- Option                                   ||- Description ||- Values ||- 
+||||||||-These only apply in the net.ugorji.oxygen.wiki.config.override.properties
+|| net.ugorji.oxygen.config.dir                    || Configuration files are stored/read from here.  || default: ${net.ugorji.oxygen.wiki.persistence.dir}/config ||
+|| net.ugorji.oxygen.wiki.persistence.dir               || Default place where runtime, config and pages are stored as sub-directories of. Must be specified. ||  ||
+||||||||||-
+|| net.ugorji.oxygen.web.handle_error                   || Specifies whether we should handle the error, or just throw it up to the Servlet Container to handle. When we handle it, we log it and may send 404 if a special kind of WebResourceNotFoundException. We use the parameters below to decide what to do. || Default: true  ||
+|| net.ugorji.oxygen.web.log_throwable                  || If handling the error, should we log the stack trace of the exception, or just it's message || Default: true (log the stack trace also) ||
+|| net.ugorji.oxygen.web.rethrow_error                  || After handling the error, should we re-throw it. If we re-throw it, the Servlet Container can then handle it its own way again. || Default: false  ||
+|| net.ugorji.oxygen.web.trace_request                  || Should we log a message with the request path (so we can track???) || Default: false  ||
+||||||||-These only apply in the oxywiki.properties file
+|| net.ugorji.oxygen.wiki.categories                    || Comma separated list of categories || ||
+|| net.ugorji.oxygen.runtime.dir                   || Runtime artifacts like caches, indexes, etc are stored here. It is ok to remove this directory.  || default: ${net.ugorji.oxygen.wiki.persistence.dir}/runtime ||
+|| net.ugorji.oxygen.wiki.cache.manager    || Class handling cache's. Implementation of net.ugorji.oxygen.util.WikiCacheManager (or ~~ NULL ~~, to use none) || default: net.ugorji.oxygen.wiki.extensions.EhcacheBasedWikiCacheManager ||
+|| net.ugorji.oxygen.wiki.userpreferences.manager    || Class handling user preferences. Implementation of net.ugorji.oxygen.util.UserPreferencesManager || default: net.ugorji.oxygen.wiki.extensions.filesystem.WikiFSUserPreferencesManager ||
+|| net.ugorji.oxygen.wiki.runtime.persistence.manager    || Class handling runtime persistence (of oxywiki-$sectionName.properties, etc) || default: net.ugorji.oxygen.wiki.extensions.filesystem.FSRuntimePersistenceManager ||
+|| net.ugorji.oxygen.wiki.provider.filesystem.helper  || Class which all filesystem providers (e.g. simple, perforce, rcs, etc) delegate to for doing the grunt work. Implementation of net.ugorji.oxygen.wiki.extensions.filesystem.FSHelper. ~~ Put here to force the runtime and userpreferences managers to use it. ~~ || default: net.ugorji.oxygen.wiki.extensions.filesystem.OxygenVersioningHelper ||
+|| net.ugorji.oxygen.wiki.provider.filesystem.location.base.prefix || Defines the base directory where pages for sections are stored on the filesystem. || default: ${net.ugorji.oxygen.wiki.persistence.dir}/pages ||
+||||||||-These apply in the oxywiki-$section.properties file. You can define them in oxywiki.properties file (and they act as defaults for sections if not overridden)
+||||||||-
+|| net.ugorji.oxygen.wiki.attachment.provider         || Class handling attachments. Implementation of net.ugorji.oxygen.wiki.WikiAttachmentProvider (or ~~ NULL ~~, to use none)  || default: net.ugorji.oxygen.wiki.extensions.filesystem.FSAttachmentProvider ||
+|| net.ugorji.oxygen.wiki.page.provider               || Class handling pages. Implementation of net.ugorji.oxygen.wiki.WikiPageProvider (or ~~ NULL ~~, to use none) || default: net.ugorji.oxygen.wiki.extensions.filesystem.FSPageProvider ||
+|| net.ugorji.oxygen.wiki.page.review.provider        || Class handling page reviews. Implementation of net.ugorji.oxygen.wiki.WikiPageReviewProvider (or ~~ NULL ~~, to use none) || default: net.ugorji.oxygen.wiki.extensions.filesystem.FSPageReviewProvider ||
+|| net.ugorji.oxygen.wiki.provider.filesystem.helper  || Class which all filesystem providers (e.g. simple, perforce, rcs, etc) delegate to for doing the grunt work. Implementation of net.ugorji.oxygen.wiki.extensions.filesystem.FSHelper || default: net.ugorji.oxygen.wiki.extensions.filesystem.OxygenVersioningHelper ||
+||||||||-
+|| net.ugorji.oxygen.web.base.url                        || Base URL of the wiki. Used by email notifier and RSS feeds. || e.g. http://localhost:8080/oxywiki ||
+|| net.ugorji.oxygen.wiki.entry.page                     || Entry page of the wiki. Used if no page is specified. || default: Main ||
+|| net.ugorji.oxygen.wiki.about.page                     || About page of the wiki instance. || default: help:About ||
+|| net.ugorji.oxygen.wiki.user.shortcut                  || Configure the name of the shortcut to be used for linking to author's names in views which show author. This way, you can configure it to an external site which shows information about your users. This wiki does not maintain it's own users (which is a very good thing). || default: action.user ||
+|| net.ugorji.oxygen.wiki.default.user                   || Default user, if no-one is logged in. || default: guest ||
+|| net.ugorji.oxygen.wiki.encoding                       || Encoding || default: UTF-8 ||
+|| net.ugorji.oxygen.wiki.locale                         || Default Locale || default: en ||
+|| net.ugorji.oxygen.wiki.locales.supported              || Locales supported || en, ja ||
+|| net.ugorji.oxygen.wiki.engine.name                    || Engine name. Used in the title. || default: COLLAB ||
+|| net.ugorji.oxygen.wiki.decorate.external.links        || Whether or not to put a mark beside external links, to show them clearly. By default, an arrow is put beside external links. || default: true ||
+|| net.ugorji.oxygen.wiki.index.recreate.on.startup      || Whether to recreate index(es) on startup || default: true ||
+|| net.ugorji.oxygen.wiki.cache.clear.on.startup         || Whether to clear cache on startup. Ensure this is false if you are using page drafts. || default: false ||
+|| net.ugorji.oxygen.wiki.index.details                  || Whether to index the details of the page. This is important 'cos it causes performance degradation at startup if the backend provider is slow (e.g. a heavily loaded SubVersion or Perforce server. || default: true ||
+|| net.ugorji.oxygen.wiki.scriptmacro.groups             || These are the groups, that are allowed to execute scripts. Only applicable to the  script macro. ||  ||
+|| net.ugorji.oxygen.wiki.edit.lock.ttl                  || Length of time that an edit lock is maintained (in milliseconds) || default: 1200000 ||
+|| net.ugorji.oxygen.wiki.edit.lock.type                 || Lock type. One of NONE, WARN or EXCLUSIVE. || default: WARN ||
+|| net.ugorji.oxygen.wiki.edit.constrain_tags            || Whether or not to constrain tags to the list configured under {{net.ugorji.oxygen.wiki.edit.allowed_tags}} || default: false ||
+|| net.ugorji.oxygen.wiki.edit.allowed_tags              || The list of tags to allow. This allows us constrain the tags (as opposed to it being free form) || default:  ||
+|| net.ugorji.oxygen.wiki.search.hits.max                || Maximum number of pages to show in a search || default: 20 ||
+|| net.ugorji.oxygen.wiki.search.score.min               || Minimum score to show in the search || default: 0.1 ||
+|| net.ugorji.oxygen.wiki.search.score.threshold         || Any hit with a score above this, will always be included in the search results || default: 0.9 ||
+||||||||-
+|| net.ugorji.oxygen.logger.level                       || default logging level. Any message with a loglevel below this is not logged. || INFO, DEBUG, etc        ||
+|| net.ugorji.oxygen.wiki.show.details                  || Whether to show details by default. Sections which have slow page/review providers should set this to false. Default = true.  || true or false      ||
+|| net.ugorji.oxygen.wiki.trail.size.max                || Max number of trail U want to see in the view page || An integer e.g. 1, 2, 3, 4, ... ||
+|| net.ugorji.oxygen.wiki.html.escape                   || by default, should < and > be escaped, or put as is. If put as is, then embedding html is much easier.        || true or false ||
+|| net.ugorji.oxygen.wiki.camelcaseword.is.link         || camelcasewords are words formed by joining words e.g. WhatIsMyName. We can automatically assume this is a pagename.        || true or false ||
+|| net.ugorji.oxygen.wiki.slashseparated.is.link        || slash separated words look like Main/Classes. We can automatically assume this is a pagename.        || true or false ||
+|| net.ugorji.oxygen.wiki.decorate.external.links       || some sections can turn off decorating external links  || true       ||
+|| net.ugorji.oxygen.wiki.default.user                  || Username to use, if no-one is logged in, and we can't infer the remote host name || default: guest ||
+|| net.ugorji.oxygen.web.error.show_message_only        || Whether to show only the message, or also the exception stack trace et al. For production, set it to true. || default: false ||
+||||||||-
+|| net.ugorji.oxygen.wiki.captcha.enabled               || Whether to use captcha to prevent automated posting to the wiki || default: false ||
+|| net.ugorji.oxygen.captcha.fontnames                  || Configure what fonts to use for the captcha challenge. Comma-Separated list. || default: Arial,Dialog ||
+|| net.ugorji.oxygen.captcha.charranges                 || Configure what character ranges to use for the captcha challenge. E.g. A-Z,3-8 || default: A-Z ||
+||||||||-
+|| net.ugorji.oxygen.wiki.show.rss.link.in.header       || If true, browsers will see a link in html head section, and put a visual UI so that you can easily add feed for it. || default: true ||
+|| net.ugorji.oxygen.wiki.only.index.published.pages    || If true, only allow browsing through pages with published flag set to true || default: false ||
+|| net.ugorji.oxygen.wiki.calendar.title.source          || On calendar/blog view, should we show first line of content, or Page name as title of entry? || Pagename or FirstLine ||
+|| net.ugorji.oxygen.wiki.freelink.supported            || freelinking is the ability to auto link a word, if it matches (ignoring case) a pagename. || true or false ||
+|| net.ugorji.oxygen.wiki.actions_not_supported         || some sections can be turned off: e.g. edit, review, attachment, delete, deleteattachment, etc || default: blank string ||
+|| net.ugorji.oxygen.wiki.username.set.supported        || Allow user configure a cookie-based username (to override logged in username) || default: true       ||
+|| net.ugorji.oxygen.wiki.asis.supported                || Allow AS_IS tags. This could be a security issue.                || default: true       ||
+|| net.ugorji.oxygen.wiki.html.tags.supported           || Allow HTML tags. This could be a security issue.                || default: true       ||
+|| net.ugorji.oxygen.wiki.page_draft_supported          || Allow folks the ability to save page drafts, and use the drafts at a later time. || default: true       ||
+|| net.ugorji.oxygen.wiki.delete_version_supported      || Configure whether versions can be deleted on this section. || default: true       ||
+||||||||-
+|| net.ugorji.oxygen.wiki.publisher_groups              || Only allow folks in this group to publish pages. If NULL, then allow anyone publish pages.               || default: NULL       ||
+||||||||-
+|| net.ugorji.oxygen.wiki.email.supported               || does this engine support emails? configure in oxywiki.properties  || true       ||
+|| net.ugorji.oxygen.wiki.email.smtp.host               || SMTP host used for email purposes  || e.g. mailhost.yahoo.com       ||
+|| net.ugorji.oxygen.wiki.email.sender                  || email sender address  || e.g. ugorji@naigeegroup.com      ||
+|| net.ugorji.oxygen.wiki.email.format                  || what is the email format  || html or text. default: html      ||
+|| net.ugorji.oxygen.wiki.admin.email                   || Admin Email || ||
+||||||||-
+|| net.ugorji.oxygen.wiki.ldapfind.url              || URL of the ldap server  ||        ||
+|| net.ugorji.oxygen.wiki.ldapfind.rdn_key          || Relative Distinguished Name Key. This is used to create distinguished names (dn)  ||        ||
+|| net.ugorji.oxygen.wiki.ldapfind.dn_root          || This is the root of the dn. By combining the rdn_key, a value of it, and the dn_root, we can construct full dn's.  ||        ||
+|| net.ugorji.oxygen.wiki.ldapfind.username_key     || This is the key which tells us what ldap attribute our usernames (author names) bind to ||        ||
+|| net.ugorji.oxygen.wiki.ldapfind.user             || If the ldap server requires authentication to view this info, pass the username here. Most LDAP servers do not.  ||  Optional      ||
+|| net.ugorji.oxygen.wiki.ldapfind.password         || If the ldap server requires authentication to view this info, pass the password here. Most LDAP servers do not.  ||  Optional      ||
+||||||||-
+|| net.ugorji.oxygen.wiki.template.basefile             || This is the top-level page shown  || default: ``template.jsp`` ||
+|| net.ugorji.oxygen.wiki.template.templates            || Comma-separated list of templates || default: ``default`` ||
+||||||||-
+|| net.ugorji.oxygen.wiki.template.jsp.decoration.left  || Page which should be used as the left menu. A page from another section can be used here, by doing like `` general:Left ``. || default: `` Left `` ||
+|||||||| ~~ The above configuration applies to left, right, top and bottom. By default, the values are `` Left, Right, Top and Bottom `` ~~
+|| net.ugorji.oxygen.wiki.template.jsp.hide_menu_on_print_media || Whether to hide the menu (left, right, top, bottom, links, etc) when printing. || default: true ||
+|| net.ugorji.oxygen.wiki.template.jsp.calendar.location || Where to show calendar (like blog calendar). If blank or not specified, no calendar is shown || Left or Right ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.logout        || Whether to show logout button, if the user is logged in || default:true ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.toplinks     || ditto || default:true ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.attachments  || ditto || default:true ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.reviews      || ditto || default:true ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.pageinfo     || ditto || default:false ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.inlinereviews|| ditto || default:false ||
+|| net.ugorji.oxygen.wiki.template.jsp.show.pagename     || ditto || default:true ||
+|| net.ugorji.oxygen.wiki.template.jsp.stylesheets       || Specify a list of stylesheets, space separated. They are used in your instance || ||
+                                              
+
+===== Emoticons
+To configure more emoticons, add properties that begin with net.ugorji.oxygen.wiki.emoticon.$emoticonName to a URL location of the emoticon
+e.g. ``net.ugorji.oxygen.wiki.emoticon.:funny: = http://yahoo.com/emoticons/funny.gif ``
+~~ Add these to your oxywiki.properties ~~
+
+===== Censored Words
+To configure censored words, add properties that begin with net.ugorji.oxygen.wiki.censoredword.$censoredWord to a replacement
+e.g. ``net.ugorji.oxygen.wiki.censoredword.asshole = **** ``
+~~ Add these to your oxywiki.properties ~~
+
+===== Plugins
+This wiki allows you to plugin some actions at the start of initialization, and at the 
+end of initialization. On shutdown, it also executes their callbacks to close them effectively.
+
+Each ~~ plugin ~~ should implement net.ugorji.oxygen.util.Plugin.
+
+You configure them as below:
+{{{
+  net.ugorji.oxygen.wiki.plugin.preinit.logging = net.ugorji.oxygen.web.JdkWebLoggingPlugin
+  net.ugorji.oxygen.wiki.plugin.preinit.my_second = my.second.MySecondPreInitPlugin
+  net.ugorji.oxygen.wiki.plugin.postinit.my_third = my.third.MyThirdPostInitPlugin
+}}}
+
+===== Listeners
+You can configure Listeners as follows:
+{{{
+  net.ugorji.oxygen.wiki.listener.email = net.ugorji.oxygen.wiki.extensions.WikiEmailNotifier
+  net.ugorji.oxygen.wiki.listener.my_second = my.second.MySecondListener
+}}}
+These listeners receive all events on page edit, delete, etc - and can act appropriately.
+The WikiEmailNotifier for example sends an email of diffs to all subscribers to the page.
+
+===== Actions
+You can actually configure actions as below: 
+{{{
+  net.ugorji.oxygen.wiki.action.my_sayhello = my.actions.SayHelloAction
+}}}
+
+===== Macros
+You can actually configure macros as below: 
+{{{
+  net.ugorji.oxygen.wiki.macro.my_sayhello = my.macros.SayHelloMacro
+}}}
+
+===== Link shortcuts
+You can configure link shortcuts, as below:
+{{{
+  net.ugorji.oxygen.wiki.extwiki.jspwiki                 = http://www.jspwiki.org/Wiki.jsp?page={0}
+}}}
+When you do this, if something like the following is seen in a page, it is transformed.
+In example above, {{ `` jspwiki:abc `` }} is transformed to {{ `` http://www.jspwiki.org/Wiki.jsp?page=abc `` }}
+
+==== Sample properties files 
+The attached files here, show some sample properties files.
+

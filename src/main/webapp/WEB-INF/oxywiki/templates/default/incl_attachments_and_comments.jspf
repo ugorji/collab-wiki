@@ -1,0 +1,41 @@
+<%--
+ put the footer here (with links to edit, et al) 
+ put the attachments (instead, let the individuals put it in the page themselves)
+ Only put link for adding attachments, if attachment is supported
+ 
+--%>
+
+<% if(mb_isViewPage && mb_pageExists) { %>
+  <% String author1 = StringUtils.nonNullString(WikiViewUtils.getAuthor(m_wp), "-"); %>
+  <hr />
+  <i>(<%= m_wi18n.str("templates.default.version") %> <%= m_wp.getVersion() %> | 
+      <%= m_wi18n.str("templates.default.modified") %> <%= m_df.format(m_wp.getDate()) %> | 
+      <%= m_wi18n.str("templates.default.by") %> <a href="<%= WikiUtils.getUserLink(author1) %>"><%= author1 %></a> | 
+      <%= m_wi18n.str("templates.default.tags") %> <%= StringUtils.nonNullString(m_wp.getAttribute("tags")) %>)</i>
+  <hr />
+  <a name="<%= ms_attCommToggleAnchor %>" />
+  <%= m_wi18n.str("templates.default.toggle_show_or_hide") %>: |
+  <a href="#<%= ms_attCommToggleAnchor %>" onClick="javascript:oxywiki_toggle_visibility_for_id('oxywiki_attachments')"><%= m_wi18n.str("templates.default.attachments") %>(<%= m_wcengine.getIndexingManager().lookupAttachmentNames(ms_pageName, null, null).length %>) </a> |
+  <a href="#<%= ms_attCommToggleAnchor %>" onClick="javascript:oxywiki_toggle_visibility_for_id('oxywiki_reviews')"><%= m_wi18n.str("templates.default.reviews") %>(<%= m_wcengine.getIndexingManager().lookupPageReviewNames(ms_pageName, null, null).length %>)</a> |
+  <a href="#<%= ms_attCommToggleAnchor %>" onClick="javascript:oxywiki_toggle_visibility_for_tag('blockquote')"><%= m_wi18n.str("templates.default.inline_reviews") %></a>  |
+  <% if(m_wcengine.isActionSupported("reviewpost")) { %><a href="#<%= ms_attCommToggleAnchor %>" onClick="javascript:oxywiki_toggle_visibility_for_id('oxywiki_add_review')"><%= m_wi18n.str("jspviews.reviews.add_review") %></a>  | <% } %>
+  <% if(m_wcengine.isActionSupported("attachmentspost")) { %><a href="#<%= ms_attCommToggleAnchor %>" onClick="javascript:oxywiki_toggle_visibility_for_id('oxywiki_add_attachment')"><%= m_wi18n.str("jspviews.attachments.add_attachment") %></a> |<% } %>
+  <%--  'oxy_inline_review_' --%>
+  <% if(m_wcengine.isActionSupported("attachments")) { %>
+  <a name="oxy_attachments" />
+    <% m_wlh.setAttribute("hide.attachments", String.valueOf(!mb_showattachments)); %>
+    <% m_wlh.setAttribute("hide.attachments.addform", "true"); %>    
+    <% m_wlh.setAttribute("include.deleted.attachments", "false"); %>    
+    <% out.flush(); %><% WikiViewUtils.includeView("attachments"); %>
+  <% } %>
+  
+  <% if(m_wcengine.isActionSupported("review")) { %>
+  <a name="oxy_reviews" />
+    <% m_wlh.setAttribute("hide.reviews", String.valueOf(!mb_showreviews)); %>
+    <% m_wlh.setAttribute("hide.reviews.addform", "true"); %>    
+    <% out.flush(); %><% WikiViewUtils.includeView("review"); %>
+  <% } %>
+<% } %>
+
+
+

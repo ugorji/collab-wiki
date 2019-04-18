@@ -1,0 +1,77 @@
+{pi:freelink=false| /}
+
+""" This page is not complete. The complete list of actions is no longer documented. 
+We now have about 40 actions for different things. """
+
+Actions are high level functions.
+
+An action completely handles the work for a request.
+
+Basically, actions form a part of the URL link, which is typically of the form
+ * `` __contextpath__ / oxy / __action__ / __section__ / page #anchor ``
+
+By having the action be a part of the request URL, it is easy to apply container 
+managed security. You can easily restrict access to any action via standard 
+webapp security pattern matching
+
+== Built in Actions 
+
+ * view
+ * viewattachment
+ * edit
+ * attachments
+ * admin
+ * printableview
+ * pageinfo
+ * refs
+ * sysinfo
+ * sections
+ * diff
+ * search
+ * userprefs
+ * recentchanges
+ * pageindex
+ * raw
+ * rss
+ * misc
+ * ~~ and many more ~~
+
+== More Information on actions 
+
+Misc
+ * Allow you perform some misc actions
+   * create/view/edit arbitrary page
+   * view recent changes for an arbitrary period
+   * view rss feed for an arbitrary period
+ 
+Admin
+ * Typically, these actions are only available to administrators (so we put them on a different page)
+ * Allows you to 
+   * reset the whole wiki engine (thus reloading everything)
+   * load, unload or reload a specific section
+
+Refs
+ * Shows references to a given page
+ * These include
+   * Pages referenced by the current page
+   * Pages which the current page references
+
+Recent Changes
+ * Shows recent changes for the last 30, 60 or 90 days
+
+Page Index
+ * Shows all the pages within the Wiki
+
+Sys Info
+ * Shows the different registered sections (spaces)
+ 
+== Writing your own Custom Actions
+
+You can create a custom action, by implementing net.ugorji.oxygen.web.WebAction, and configuring
+it within the oxywiki.properties file.
+
+Ensure that you do not conflict with the names of builtin actions. To do that, you can
+prefix your action names with something unique e.g. my_ .
+{{{
+  net.ugorji.oxygen.wiki.action.my_sayhello = my.actions.SayHelloAction
+}}}
